@@ -25,7 +25,7 @@ jobs:
       - name: Azure Login
         uses: Azure/login@v1.4.2
         with:
-          creds: ${{ secrets.APP_SECRET }}
+          creds: ${{ secrets.TF_AZURE_CREDENTIAL }}
           enable-AzPSSession: true
 
       - name: Install Terraform
