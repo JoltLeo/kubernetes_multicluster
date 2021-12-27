@@ -2,6 +2,12 @@
 
 name: Deploy Multicluster
 
+env:
+  RESOURCE_GROUP: "tfstate-rg"
+  STORAGE_ACCOUNT: "tfstate-sa"
+  CONTAINER_NAME: "tfstate-container"
+  KEY: "main.tfstate"
+  
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
@@ -31,6 +37,25 @@ jobs:
           # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
           enable-AzPSSession: true
 
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: latest
+
+      - name: Terraform init backend
+        uses: ahmedig/terraform-azurerm-backend@v1
+        with:
+          azure_credentials: ${{ secrets.TF_AZURE_CREDENTIAL }}
+          # State file location - resource group name
+          resource_group_name: ${{ env.RESOURCE_GROUP }}
+          # State file location - container name
+          container_name: ${{ env.CONTAINER_NAME }}
+          # State file location - storage account name
+          storage_account_name: ${{ env.STORAGE_ACCOUNT }}
+          # State file location - file name
+          file_name: ${{ env.KEY }}
+          # Terraform working directory
+          tf_working_directory: ${{ GITHUB_WORKSPACE }}/terraform
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
