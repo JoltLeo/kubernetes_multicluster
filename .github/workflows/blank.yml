@@ -40,10 +40,9 @@ jobs:
         with:
           terraform_version: latest
 
-
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: Terraform init
+        run: terraform init
+        working-directory: ${{ github.workspace}}/terraform
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
