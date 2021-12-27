@@ -26,7 +26,6 @@ jobs:
         uses: Azure/login@v1.4.2
         with:
           creds: ${{ secrets.TF_AZURE_CREDENTIAL }}
-          enable-AzPSSession: true
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
@@ -41,7 +40,7 @@ jobs:
           container_name: ${{ env.CONTAINER_NAME }}
           storage_account_name: ${{ env.STORAGE_ACCOUNT }}
           file_name: ${{ env.KEY }}
-          tf_working_directory: $GITHUB_WORKSPACE/terraform
+          tf_working_directory: ${{ github.workspace }}/terraform
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
