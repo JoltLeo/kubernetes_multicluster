@@ -19,7 +19,7 @@ data "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_key_vault" "key_vault" {
-  name                        = "azdo-${var.vault_identifier}-${var.env}"
+  name                        = "pf-${var.vault_identifier}-${var.env}"
   location                    = data.azurerm_resource_group.rg.location
   resource_group_name         = data.azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true
