@@ -41,7 +41,7 @@ jobs:
           container_name: ${{ env.CONTAINER_NAME }}
           storage_account_name: ${{ env.STORAGE_ACCOUNT }}
           file_name: ${{ env.KEY }}
-          tf_working_directory: ${{ GITHUB_WORKSPACE }}/terraform
+          tf_working_directory: $GITHUB_WORKSPACE/terraform
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
