@@ -4,7 +4,7 @@ name: Deploy Multicluster
 
 env:
   RESOURCE_GROUP: "tfstate-rg"
-  STORAGE_ACCOUNT: "tfstate-sa"
+  STORAGE_ACCOUNT: "tfstatepfaccount"
   CONTAINER_NAME: "tfstate-container"
   KEY: "main.tfstate"
   
