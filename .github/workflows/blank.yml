@@ -29,11 +29,11 @@ jobs:
           # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
           creds: # optional
           # ClientId of the Azure Service principal created.
-          client-id: # optional
+          client-id: 6749c383-3df2-4028-a974-7711d176cd67
           # TenantId of the Azure Service principal created.
           tenant-id: bd41b059-b038-488a-bdb8-e0d259819fc5
           # Azure subscriptionId
-          subscription-id: # optional
+          subscription-id: 21598ca8-3b69-42da-98d7-eb0867540218
           # Set this value to true to enable Azure PowerShell Login in addition to Az CLI login
           enable-AzPSSession: true
 
