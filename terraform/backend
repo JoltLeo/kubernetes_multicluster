@@ -1,4 +1,4 @@
 resource_group_name="tfstate-rg"
-storage_account_name="tfstate-sa"
+storage_account_name="tfstatepfaccount"
 container_name="tfstate-container"
 key="main.tfstate"
