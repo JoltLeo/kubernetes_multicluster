@@ -15,7 +15,7 @@ secret_readers_apps   |list(string)    | Não          | List of service princip
 secret_readers_groups |list(string)    | Não          | List of AD groups with ``get`` and ``list`` permissions on secrets. efaults to empty list
 certificate_managers_apps   |list(string)    | Não          | List of service principals with ``management`` permissions on certificates. Defaults to empty list
 
-*O nome do Key Vault será composto da seguinte forma: ``azdo-${var.vault_identifier}-${var.env}``
+*O nome do Key Vault será composto da seguinte forma: ``pf-${var.vault_identifier}-${var.env}``
 
 ## Outputs
 * key_vault_id

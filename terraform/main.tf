@@ -31,11 +31,10 @@ provider "azurerm" {
   }
 }
 
-module "my_kv" {
-  source = "./modules/az_keyvault"
 
-  project_key      = "myprojectkeypftest"
-  vault_identifier = "mykvpftest"
-  env              = "dev"
+module "my_cluster" {
+  source = "./modules/az_kubernetes"
+
+  env              = "prd"
 }
 

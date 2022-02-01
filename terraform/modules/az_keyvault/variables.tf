@@ -16,7 +16,7 @@ variable "env" {
 
 variable "secret_admins" {
     type = list(string)
-    default = ["2aa1a9d8-fde6-4f13-aec1-42135573bb6f"]
+    default = [""]
 }
 variable "area_name" {
     type    = string
