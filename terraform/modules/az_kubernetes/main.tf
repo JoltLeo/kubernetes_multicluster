@@ -35,9 +35,11 @@ resource "azurerm_kubernetes_cluster" "az_cluster" {
     node_count = var.number_nodes_per_cluster
     vm_size    = var.node_size
   }
-
-  kube_dashboard {
-    enabled = true
+  
+  addon_profile {  
+    kube_dashboard {
+      enabled = true
+    }
   }
 
   identity {
