@@ -31,9 +31,7 @@ jobs:
           files: '["**/*"]'
 
       - name: Azure Login
-        uses: Azure/login@v1.4.2
-        with:
-          creds: ${{ secrets.TF_AZURE_CREDENTIAL }}
+        run: az login --service-principal -u 6749c383-3df2-4028-a974-7711d176cd67 -p ${{ secrets.AZURE_APP_SECRET2 }} --tenant bd41b059-b038-488a-bdb8-e0d259819fc5
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
