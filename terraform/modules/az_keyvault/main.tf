@@ -9,13 +9,13 @@ terraform {
       version = ">1.0.0"
     }
   }
-  required_version = ">= 0.13"
+  required_version = ">= 1.0.0"
 }
 
 data "azurerm_client_config" "current" {}
 
 data "azurerm_resource_group" "rg" {
-  name     = var.project_key
+  name = var.project_key
 }
 
 resource "azurerm_key_vault" "key_vault" {
@@ -36,14 +36,14 @@ resource "azurerm_key_vault" "key_vault" {
   }
 
   tags = {
-    env  = var.env
+    env = var.env
   }
 }
 
 resource "azurerm_key_vault_access_policy" "devops_agent" {
-  key_vault_id       = azurerm_key_vault.key_vault.id
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = data.azurerm_client_config.current.object_id
+  key_vault_id = azurerm_key_vault.key_vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = data.azurerm_client_config.current.object_id
   secret_permissions = [
     "set",
     "get",
@@ -63,9 +63,9 @@ resource "azurerm_key_vault_access_policy" "devops_agent" {
 resource "azurerm_key_vault_access_policy" "secret_admins" {
   for_each = toset(var.secret_admins)
 
-  key_vault_id       = azurerm_key_vault.key_vault.id
-  tenant_id          = data.azurerm_client_config.current.tenant_id
-  object_id          = each.key
+  key_vault_id = azurerm_key_vault.key_vault.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = each.key
   secret_permissions = [
     "set",
     "get",

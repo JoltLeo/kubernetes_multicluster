@@ -15,7 +15,10 @@ terraform {
       source = "hashicorp/azurerm"
     }
     azuread = {
-      source  = "hashicorp/azuread"
+      source = "hashicorp/azuread"
+    }
+    aws = {
+      source = "hashicorp/aws"
     }
   }
   required_version = ">=1.0.5"
@@ -29,16 +32,22 @@ provider "azurerm" {
       purge_soft_delete_on_destroy    = false
     }
   }
-  tenant_id            = "bd41b059-b038-488a-bdb8-e0d259819fc5"
-  subscription_id      = "21598ca8-3b69-42da-98d7-eb0867540218"
-  client_id            = "6749c383-3df2-4028-a974-7711d176cd67"
-  client_secret        = "#{APP_SECRET}#"
+  tenant_id       = "bd41b059-b038-488a-bdb8-e0d259819fc5"
+  subscription_id = "21598ca8-3b69-42da-98d7-eb0867540218"
+  client_id       = "6749c383-3df2-4028-a974-7711d176cd67"
+  client_secret   = "#{APP_SECRET}#"
 }
 
+provider "aws" {
+  alias      = "aws-br"
+  region     = "sa-east-1"
+  access_key = "#{AWS_ACCESS_KEY}#"
+  secret_key = "#{AWS_SECRET_KEY}#"
+}
 
 module "my_cluster" {
   source = "./modules/az_kubernetes"
 
-  env              = "prd"
+  env = "prd"
 }
 

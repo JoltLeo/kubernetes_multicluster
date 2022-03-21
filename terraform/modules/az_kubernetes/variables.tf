@@ -8,23 +8,24 @@ variable "env" {
 }
 
 variable "clusters_region" {
-    type = string
-    default = "brazilsouth"
-    description = "Azure region of the cluster"
+  type        = string
+  default     = "brazilsouth"
+  description = "Azure region of the cluster"
 }
 
 variable "node_size" {
-    type    = string
-    default = "Standard_D2_v2"
-    description = "Cluster VM node size."
+  type        = string
+  default     = "Standard_D2_v2"
+  description = "Cluster VM node size."
 }
 
 variable "kubernetes_version" {
-    type    = string
-    default = "1.21.7"
+  type        = string
+  default     = "1.21.7"
+  description = "Kubernetes cluster version"
 }
 
 variable "number_nodes_per_cluster" {
-    type    = number
-    default = 2
+  type    = number
+  default = 2
 }
