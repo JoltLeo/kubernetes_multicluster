@@ -32,10 +32,10 @@ provider "azurerm" {
       purge_soft_delete_on_destroy    = false
     }
   }
-  tenant_id       = "bd41b059-b038-488a-bdb8-e0d259819fc5"
-  subscription_id = "21598ca8-3b69-42da-98d7-eb0867540218"
-  client_id       = "6749c383-3df2-4028-a974-7711d176cd67"
-  client_secret   = "#{APP_SECRET}#"
+  tenant_id            = "bd41b059-b038-488a-bdb8-e0d259819fc5"
+  subscription_id      = "842357d2-6cd7-475f-a4ad-d26a927f1a9f"
+  client_id            = "6749c383-3df2-4028-a974-7711d176cd67"
+  client_secret        = "#{APP_SECRET}#"
 }
 
 provider "aws" {
