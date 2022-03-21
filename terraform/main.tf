@@ -38,11 +38,7 @@ provider "azurerm" {
   client_secret        = "#{APP_SECRET}#"
 }
 
-provider "aws" {
-  region     = "sa-east-1"
-  access_key = "#{AWS_ACCESS_KEY}#"
-  secret_key = "#{AWS_SECRET_KEY}#"
-}
+provider "aws" {}
 
 module "my_cluster_azure" {
   source = "./modules/az_kubernetes"
