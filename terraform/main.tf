@@ -45,9 +45,14 @@ provider "aws" {
   secret_key = "#{AWS_SECRET_KEY}#"
 }
 
-module "my_cluster" {
+module "my_cluster_azure" {
   source = "./modules/az_kubernetes"
 
   env = "prd"
 }
 
+  module "my_cluster_aws" {
+  source = "./modules/aws_kubernetes"
+
+  env = "prd"
+}
