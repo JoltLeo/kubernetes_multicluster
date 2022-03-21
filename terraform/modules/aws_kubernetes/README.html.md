@@ -30,7 +30,6 @@
 |------|------|
 | [aws_security_group.all_worker_mgmt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.worker_group_mgmt_one](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_security_group.worker_group_mgmt_two](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
 | [aws_eks_cluster.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
@@ -43,7 +42,8 @@
 | <a name="input_clusters_region"></a> [clusters\_region](#input\_clusters\_region) | AWS region of the cluster | `string` | `"sa-east-1"` | no |
 | <a name="input_env"></a> [env](#input\_env) | Cluster environment. It will be used to tag all resources. | `string` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes cluster version | `string` | `"1.21"` | no |
-| <a name="input_node_size"></a> [node\_size](#input\_node\_size) | Cluster VM node size. | `string` | `"Standard_D2_v2"` | no |
+| <a name="input_node_size"></a> [node\_size](#input\_node\_size) | Cluster VM node size. | `string` | `"t2.medium"` | no |
+| <a name="input_number_nodes_per_cluster"></a> [number\_nodes\_per\_cluster](#input\_number\_nodes\_per\_cluster) | n/a | `number` | `2` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR for cluster VPC | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_vpc_private_ip"></a> [vpc\_private\_ip](#input\_vpc\_private\_ip) | CIDR list for private subnet | `list(string)` | <pre>[<br>  "10.0.1.0/24"<br>]</pre> | no |
 | <a name="input_vpc_public_ip"></a> [vpc\_public\_ip](#input\_vpc\_public\_ip) | CIDR list for public subnet | `list(string)` | <pre>[<br>  "10.0.4.0/24"<br>]</pre> | no |

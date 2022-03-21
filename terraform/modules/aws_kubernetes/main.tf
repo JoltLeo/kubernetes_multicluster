@@ -81,21 +81,6 @@ resource "aws_security_group" "worker_group_mgmt_one" {
   }
 }
 
-resource "aws_security_group" "worker_group_mgmt_two" {
-  name_prefix = "worker_group_mgmt_two_${random_string.suffix.result}_${var.env}"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      "192.168.0.0/16",
-    ]
-  }
-}
-
 resource "aws_security_group" "all_worker_mgmt" {
   name_prefix = "all_worker_management_${random_string.suffix.result}_${var.env}"
   vpc_id      = module.vpc.vpc_id
@@ -124,27 +109,44 @@ module "eks" {
 
   vpc_id = module.vpc.vpc_id
 
-  workers_group_defaults = {
-    root_volume_type = "gp2"
+  cluster_addons = {
+    coredns = {
+      resolve_conflicts = "OVERWRITE"
+    }
+    kube-proxy = {}
+    vpc-cni = {
+      resolve_conflicts = "OVERWRITE"
+    }
   }
 
-  worker_groups = [
-    {
-      name                          = "worker-group-1-${random_string.suffix.result}"
-      instance_type                 = "t2.small"
-      additional_userdata           = "echo leo.gcs"
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
-      asg_desired_capacity          = 2
-    },
-    {
-      name                          = "worker-group-2-${random_string.suffix.result}"
-      instance_type                 = "t2.medium"
-      additional_userdata           = "echo leo.gcs"
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
-      asg_desired_capacity          = 1
-    },
-  ]
+  eks_managed_node_group_defaults = {
+    ami_type               = "AL2_x86_64"
+    disk_size              = 50
+    instance_types         = [var.node_size]
+    vpc_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+  }
+
+  eks_managed_node_groups = {
+    blue = {}
+    green = {
+      min_size     = var.number_nodes_per_cluster
+      max_size     = var.number_nodes_per_cluster
+      desired_size = var.number_nodes_per_cluster
+
+      instance_types = [var.node_size]
+      capacity_type  = "SPOT"
+      taints = {
+        dedicated = {
+          key    = "dedicated"
+          value  = "gpuGroup"
+          effect = "NO_SCHEDULE"
+        }
+      }
+    }
+  }
 }
+
+
 
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id

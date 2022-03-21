@@ -30,8 +30,13 @@ variable "kubernetes_version" {
 
 variable "node_size" {
   type        = string
-  default     = "Standard_D2_v2"
+  default     = "t2.medium"
   description = "Cluster VM node size."
+}
+
+variable "number_nodes_per_cluster" {
+  type    = number
+  default = 2
 }
 
 variable "env" {
