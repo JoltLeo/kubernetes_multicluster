@@ -44,12 +44,12 @@ provider "kubernetes" {
 data "aws_availability_zones" "available" {}
 
 resource "random_string" "suffix" {
-  length  = 8
+  length  = 4
   special = false
 }
 
 locals {
-  cluster_name = "eks-${var.clusters_region}-${random_string.suffix.result}-${var.env}"
+  cluster_name = "eks-${random_string.suffix.result}-${var.env}"
   kubeconfig = yamlencode({
     apiVersion      = "v1"
     kind            = "Config"

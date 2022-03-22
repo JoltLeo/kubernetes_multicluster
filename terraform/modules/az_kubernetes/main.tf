@@ -15,7 +15,7 @@ terraform {
 
 resource "random_integer" "random_id" {
   min = 1
-  max = 50000
+  max = 5000
 }
 
 resource "azurerm_resource_group" "rg_cluster" {
@@ -31,15 +31,9 @@ resource "azurerm_kubernetes_cluster" "az_cluster" {
   kubernetes_version  = var.kubernetes_version
 
   default_node_pool {
-    name       = "aks${var.clusters_region}pool${random_integer.random_id.result}"
+    name       = "akspool${random_integer.random_id.result}"
     node_count = var.number_nodes_per_cluster
     vm_size    = var.node_size
-  }
-
-  addon_profile {
-    kube_dashboard {
-      enabled = true
-    }
   }
 
   identity {

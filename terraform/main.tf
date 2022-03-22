@@ -38,7 +38,9 @@ provider "azurerm" {
   client_secret        = "#{APP_SECRET}#"
 }
 
-provider "aws" {}
+provider "aws" {
+  region = "sa-east-1"
+}
 
 module "my_cluster_azure" {
   source = "./modules/az_kubernetes"
