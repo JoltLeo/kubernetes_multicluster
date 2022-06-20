@@ -37,6 +37,11 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: latest
+          
+      - name: Install kubectl
+        uses: Azure/setup-kubectl@v2.1
+        with:
+          version: latest
 
       - name: Terraform init
         run: terraform init
