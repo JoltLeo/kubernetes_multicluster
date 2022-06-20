@@ -50,6 +50,21 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
         working-directory: ${{ github.workspace}}/terraform
+        
+      - name: Manual Workflow Approval
+        uses: trstringer/manual-approval@v1.5.0
+        with:
+          # Required approvers
+          approvers: JoltLeo
+          # Secret
+          secret: ${{ github.TOKEN }}
+          minimum-approvals: 1
+          # The custom subtitle for the issue
+          issue-title: "Check plan and Approve"
+ 
+      - name: Terraform Apply
+        run: terraform apply --auto-approve
+        working-directory: ${{ github.workspace}}/terraform
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
