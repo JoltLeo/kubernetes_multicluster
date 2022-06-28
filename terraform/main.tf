@@ -72,6 +72,9 @@ module "clusters_azure" {
   vault_id = module.key_vault.key_vault_id
   clusters_region = each.value
   env             = "prd"
+  depends_on = [
+    module.key_vault
+  ]
 }
 
 module "clusters_aws" {
@@ -80,6 +83,9 @@ module "clusters_aws" {
 
   vault_id = module.key_vault.key_vault_id
   env = "prd"
+  depends_on = [
+    module.key_vault
+  ]
 }
 
 output "kube_configs" {
