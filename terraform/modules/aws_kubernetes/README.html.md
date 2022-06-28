@@ -5,6 +5,7 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | 3.74.0 |
+| <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | >=2.29.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >=2.0.1 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | >=2.1.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >=3.1.0 |
@@ -15,6 +16,7 @@
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | 3.74.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >=2.29.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >=3.1.0 |
 
 ## Modules
@@ -30,6 +32,7 @@
 |------|------|
 | [aws_key_pair.eks_nodes](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/resources/key_pair) | resource |
 | [aws_security_group.worker_group_mgmt_one](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/resources/security_group) | resource |
+| [azurerm_key_vault_secret.secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/data-sources/availability_zones) | data source |
 | [aws_eks_cluster_auth.cluster](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/data-sources/eks_cluster_auth) | data source |
@@ -43,6 +46,7 @@
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes cluster version | `string` | `"1.21"` | no |
 | <a name="input_node_size"></a> [node\_size](#input\_node\_size) | Cluster VM node size. | `string` | `"t2.medium"` | no |
 | <a name="input_number_nodes_per_cluster"></a> [number\_nodes\_per\_cluster](#input\_number\_nodes\_per\_cluster) | n/a | `number` | `2` | no |
+| <a name="input_vault_id"></a> [vault\_id](#input\_vault\_id) | Key vault to store kube-config | `string` | n/a | yes |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR for cluster VPC | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_vpc_private_ip"></a> [vpc\_private\_ip](#input\_vpc\_private\_ip) | CIDR list for private subnet | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
 | <a name="input_vpc_public_ip"></a> [vpc\_public\_ip](#input\_vpc\_public\_ip) | CIDR list for public subnet | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |

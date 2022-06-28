@@ -15,7 +15,7 @@ terraform {
       source = "hashicorp/azurerm"
     }
     azuread = {
-      source = "hashicorp/azuread"
+      source  = "hashicorp/azuread"
       version = "1.6.0"
     }
     aws = {
@@ -60,16 +60,16 @@ provider "aws" {
 module "key_vault" {
   source = "./modules/az_keyvault"
 
-  project_key = "keyvaults-rg"
+  project_key      = "keyvaults-rg"
   vault_identifier = "kubeconfig"
-  env = "prd"
+  env              = "prd"
 }
 
 module "clusters_azure" {
   for_each = toset(var.azure_cluster_regions)
   source   = "./modules/az_kubernetes"
 
-  vault_id = module.key_vault.key_vault_id
+  vault_id        = module.key_vault.key_vault_id
   clusters_region = each.value
   env             = "prd"
   depends_on = [
@@ -82,7 +82,7 @@ module "clusters_aws" {
   source   = "./modules/aws_kubernetes"
 
   vault_id = module.key_vault.key_vault_id
-  env = "prd"
+  env      = "prd"
   depends_on = [
     module.key_vault
   ]

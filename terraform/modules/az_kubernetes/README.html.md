@@ -22,6 +22,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [azurerm_key_vault_secret.secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_secret) | resource |
 | [azurerm_kubernetes_cluster.az_cluster](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/kubernetes_cluster) | resource |
 | [azurerm_resource_group.rg_cluster](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [random_integer.random_id](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) | resource |
@@ -35,6 +36,7 @@ No modules.
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes cluster version | `string` | `"1.21.7"` | no |
 | <a name="input_node_size"></a> [node\_size](#input\_node\_size) | Cluster VM node size. | `string` | `"Standard_D2_v2"` | no |
 | <a name="input_number_nodes_per_cluster"></a> [number\_nodes\_per\_cluster](#input\_number\_nodes\_per\_cluster) | n/a | `number` | `2` | no |
+| <a name="input_vault_id"></a> [vault\_id](#input\_vault\_id) | Key vault to store kube-config | `string` | n/a | yes |
 
 ## Outputs
 
