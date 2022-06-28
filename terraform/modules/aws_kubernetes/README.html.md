@@ -4,7 +4,7 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.20.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | 3.74.0 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >=2.0.1 |
 | <a name="requirement_local"></a> [local](#requirement\_local) | >=2.1.0 |
 | <a name="requirement_null"></a> [null](#requirement\_null) | >=3.1.0 |
@@ -14,7 +14,7 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.20.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 3.74.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >=3.1.0 |
 
 ## Modules
@@ -28,25 +28,24 @@
 
 | Name | Type |
 |------|------|
-| [aws_security_group.all_worker_mgmt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
-| [aws_security_group.worker_group_mgmt_one](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_key_pair.eks_nodes](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/resources/key_pair) | resource |
+| [aws_security_group.worker_group_mgmt_one](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/resources/security_group) | resource |
 | [random_string.suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
-| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/availability_zones) | data source |
-| [aws_eks_cluster.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster) | data source |
-| [aws_eks_cluster_auth.cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/eks_cluster_auth) | data source |
+| [aws_availability_zones.available](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/data-sources/availability_zones) | data source |
+| [aws_eks_cluster_auth.cluster](https://registry.terraform.io/providers/hashicorp/aws/3.74.0/docs/data-sources/eks_cluster_auth) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_clusters_region"></a> [clusters\_region](#input\_clusters\_region) | AWS region of the cluster | `string` | `"sa-east-1"` | no |
+| <a name="input_cluster_region"></a> [cluster\_region](#input\_cluster\_region) | AWS region of the cluster | `string` | `"us-east-2"` | no |
 | <a name="input_env"></a> [env](#input\_env) | Cluster environment. It will be used to tag all resources. | `string` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes cluster version | `string` | `"1.21"` | no |
 | <a name="input_node_size"></a> [node\_size](#input\_node\_size) | Cluster VM node size. | `string` | `"t2.medium"` | no |
 | <a name="input_number_nodes_per_cluster"></a> [number\_nodes\_per\_cluster](#input\_number\_nodes\_per\_cluster) | n/a | `number` | `2` | no |
 | <a name="input_vpc_cidr"></a> [vpc\_cidr](#input\_vpc\_cidr) | CIDR for cluster VPC | `string` | `"10.0.0.0/16"` | no |
-| <a name="input_vpc_private_ip"></a> [vpc\_private\_ip](#input\_vpc\_private\_ip) | CIDR list for private subnet | `list(string)` | <pre>[<br>  "10.0.1.0/24"<br>]</pre> | no |
-| <a name="input_vpc_public_ip"></a> [vpc\_public\_ip](#input\_vpc\_public\_ip) | CIDR list for public subnet | `list(string)` | <pre>[<br>  "10.0.4.0/24"<br>]</pre> | no |
+| <a name="input_vpc_private_ip"></a> [vpc\_private\_ip](#input\_vpc\_private\_ip) | CIDR list for private subnet | `list(string)` | <pre>[<br>  "10.0.1.0/24",<br>  "10.0.2.0/24",<br>  "10.0.3.0/24"<br>]</pre> | no |
+| <a name="input_vpc_public_ip"></a> [vpc\_public\_ip](#input\_vpc\_public\_ip) | CIDR list for public subnet | `list(string)` | <pre>[<br>  "10.0.4.0/24",<br>  "10.0.5.0/24",<br>  "10.0.6.0/24"<br>]</pre> | no |
 
 ## Outputs
 
@@ -54,8 +53,8 @@
 |------|-------------|
 | <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for EKS control plane. |
 | <a name="output_cluster_id"></a> [cluster\_id](#output\_cluster\_id) | EKS cluster ID. |
+| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | EKS cluster name. |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | Security group ids attached to the cluster control plane. |
-| <a name="output_config_map_aws_auth"></a> [config\_map\_aws\_auth](#output\_config\_map\_aws\_auth) | A kubernetes configuration to authenticate to this EKS cluster. |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | kubectl config as generated by the module. |
 | <a name="output_region"></a> [region](#output\_region) | AWS region |
 <!-- END_TF_DOCS -->

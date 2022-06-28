@@ -41,6 +41,8 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_client_certificate"></a> [client\_certificate](#output\_client\_certificate) | n/a |
+| <a name="output_cluster_endpoint"></a> [cluster\_endpoint](#output\_cluster\_endpoint) | Endpoint for AKS control plane. |
+| <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | AKS cluster name |
 | <a name="output_kube_config"></a> [kube\_config](#output\_kube\_config) | n/a |
 | <a name="output_region"></a> [region](#output\_region) | AKS region |
 <!-- END_TF_DOCS -->

@@ -1,6 +1,6 @@
-variable "clusters_region" {
+variable "cluster_region" {
   type        = string
-  default     = "sa-east-1"
+  default     = "us-east-2"
   description = "AWS region of the cluster"
 }
 

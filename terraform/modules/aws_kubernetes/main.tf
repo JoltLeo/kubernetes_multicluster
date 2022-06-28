@@ -28,21 +28,6 @@ terraform {
   required_version = ">= 1.0.0"
 }
 
-provider "aws" {
-  region = var.clusters_region
-  access_key = "#{AWS_ACCESS_KEY}#"
-  secret_key = "#{AWS_SECRET_KEY}#"
-}
-
-/* kubernetes config workaround for EKS*/
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-}
-
-data "aws_availability_zones" "available" {}
-
 resource "random_string" "suffix" {
   length  = 4
   special = false
@@ -77,52 +62,9 @@ locals {
   })
 }
 
-/* Creating cluster network */
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = ">=3.2.0"
-
-  name                 = "eks-${var.clusters_region}-${var.env}-vpc"
-  cidr                 = var.vpc_cidr
-  azs                  = data.aws_availability_zones.available.names
-  private_subnets      = var.vpc_private_ip
-  public_subnets       = var.vpc_public_ip
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-}
-
-/* Creating security groups*/
-resource "aws_security_group" "worker_group_mgmt_one" {
-  name_prefix = "worker_group_mgmt_one_${random_string.suffix.result}_${var.env}"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      var.vpc_cidr,
-    ]
-  }
-}
-
-resource "aws_security_group" "all_worker_mgmt" {
-  name_prefix = "all_worker_management_${random_string.suffix.result}_${var.env}"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      var.vpc_cidr,
-      "172.16.0.0/12",
-      "192.168.0.0/16",
-    ]
-  }
+resource "aws_key_pair" "eks_nodes" {
+  key_name   = "eks-nodes-${random_string.suffix.result}"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCsCW7VzeAr/T3mNxtLxl8w4p9L/6//ghL7JgvOZD4EXvL1Y+e/qB/eVTlKbqdaAuSQ8UDdkJ+wMvDHMXA3Pf2NB6iWXQKC01YVr2om8lE5k/ftLB48LdshsqyOKKRAh3i7yZwJdptyX9sxx1cdTwXZSqDAadUgb7qoMyWkZ9pccFfJQwV4TO71A3sJtC5U7BJpsYGbmWktPhfUdw6ysNbupUKjo32oL4co8Sezl24RhmUJTnLqA4ZKfntX9SwKfImP8OkEKu/OnwX/tuBjtCTqEMRR5ivQ45FJtk/Uw0MsmOweZJ66ehL0VwljYoLiEPKYRx4gH1GrKzZrRlYCe4r7pEQ+EpE3Iug7fR6epoWejn4ECPhndlGIBoy7gVCfP7AQmbvuLOqlIFxPzU26Fo9LEwf3D/yvoH1ZFMbG42PDzlfEFpH2xqis8V8tmQuJGXGUt9kakzXalfO7JgGs8PigPgAnFyVWvmOngR1nJj5YR3oI0IasQ0sDjbfDtkc2xXZvD/Lba3P8QF2KrKkExvCEfq1Bz8Hc/Ih48zISN5/MIB+GdTVflJsrI3Im2wY5SmFF2RKqO2726xUlFJ4EGN/gS2KkzA0BYxSqCYxTlm4KIUzY8cy2hf0dIV1HgPTTSg/0/kYQ+82D5rVK29yTRKDCjQhBXGmcKoEU4Ye5VzjXKw== leo.gcs@poli.ufrj.br"
 }
 
 /* Creating EKS*/
@@ -133,6 +75,9 @@ module "eks" {
   cluster_name    = local.cluster_name
   cluster_version = var.kubernetes_version
   subnet_ids      = module.vpc.private_subnets
+
+  cluster_endpoint_private_access = true
+  cluster_endpoint_public_access  = true
 
   vpc_id = module.vpc.vpc_id
 
@@ -146,44 +91,10 @@ module "eks" {
     }
   }
 
-  # Extend cluster security group rules
-  cluster_security_group_additional_rules = {
-    egress_nodes_ephemeral_ports_tcp = {
-      description                = "To node 1025-65535"
-      protocol                   = "tcp"
-      from_port                  = 1025
-      to_port                    = 65535
-      type                       = "egress"
-      source_node_security_group = true
-    }
-  }
-
-  # Extend node-to-node security group rules
-  node_security_group_additional_rules = {
-    ingress_self_all = {
-      description = "Node to node all ports/protocols"
-      protocol    = "-1"
-      from_port   = 0
-      to_port     = 0
-      type        = "ingress"
-      self        = true
-    }
-    egress_all = {
-      description      = "Node all egress"
-      protocol         = "-1"
-      from_port        = 0
-      to_port          = 0
-      type             = "egress"
-      cidr_blocks      = ["0.0.0.0/0"]
-      ipv6_cidr_blocks = ["::/0"]
-    }
-  }
-
   eks_managed_node_group_defaults = {
-    ami_type               = "AL2_x86_64"
-    disk_size              = 50
-    instance_types         = [var.node_size]
-    vpc_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
+    disk_size      = 50
+    instance_types = [var.node_size]
+    key_name       = aws_key_pair.eks_nodes.key_name
   }
 
   eks_managed_node_groups = {
@@ -195,13 +106,6 @@ module "eks" {
 
       instance_types = [var.node_size]
       capacity_type  = "SPOT"
-      taints = {
-        dedicated = {
-          key    = "dedicated"
-          value  = "gpuGroup"
-          effect = "NO_SCHEDULE"
-        }
-      }
     }
   }
 }
