@@ -16,6 +16,7 @@ terraform {
     }
     azuread = {
       source = "hashicorp/azuread"
+      version = "1.6.0"
     }
     aws = {
       source = "hashicorp/aws"
@@ -44,16 +45,31 @@ provider "azurerm" {
   client_secret   = "#{APP_SECRET}#"
 }
 
+provider "azuread" {
+  client_id     = "6749c383-3df2-4028-a974-7711d176cd67"
+  client_secret = "#{APP_SECRET}#"
+  tenant_id     = "bd41b059-b038-488a-bdb8-e0d259819fc5"
+}
+
 provider "aws" {
   region     = var.aws_cluster_region != "" ? var.aws_cluster_region : "sa-east-1"
   access_key = "#{AWS_ACCESS_KEY}#"
   secret_key = "#{AWS_SECRET_KEY}#"
 }
 
+module "key_vault" {
+  source = "./modules/az_keyvault"
+
+  project_key = "keyvaults-rg"
+  vault_identifier = "kubeconfig"
+  env = "prd"
+}
+
 module "clusters_azure" {
   for_each = toset(var.azure_cluster_regions)
   source   = "./modules/az_kubernetes"
 
+  vault_id = module.key_vault.key_vault_id
   clusters_region = each.value
   env             = "prd"
 }
@@ -62,6 +78,7 @@ module "clusters_aws" {
   for_each = var.aws_cluster_region != "" ? toset([var.aws_cluster_region]) : []
   source   = "./modules/aws_kubernetes"
 
+  vault_id = module.key_vault.key_vault_id
   env = "prd"
 }
 

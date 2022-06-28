@@ -34,6 +34,11 @@ variable "node_size" {
   description = "Cluster VM node size."
 }
 
+variable "vault_id" {
+  type        = string
+  description = "Key vault to store kube-config"
+}
+
 variable "number_nodes_per_cluster" {
   type    = number
   default = 2

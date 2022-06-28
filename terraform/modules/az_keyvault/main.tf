@@ -24,8 +24,6 @@ resource "azurerm_key_vault" "key_vault" {
   resource_group_name         = data.azurerm_resource_group.rg.name
   enabled_for_disk_encryption = true
   tenant_id                   = data.azurerm_client_config.current.tenant_id
-  soft_delete_enabled         = true
-  soft_delete_retention_days  = 7
   purge_protection_enabled    = false
 
   sku_name = "standard"
@@ -45,17 +43,17 @@ resource "azurerm_key_vault_access_policy" "devops_agent" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = data.azurerm_client_config.current.object_id
   secret_permissions = [
-    "set",
-    "get",
-    "list",
-    "delete",
-    "purge",
-    "recover",
+    "Set",
+    "Get",
+    "List",
+    "Delete",
+    "Purge",
+    "Recover",
   ]
   certificate_permissions = [
-    "get",
-    "list",
-    "getIssuers",
+    "Get",
+    "List",
+    "GetIssuers",
     "ListIssuers",
   ]
 }
@@ -67,12 +65,12 @@ resource "azurerm_key_vault_access_policy" "secret_admins" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = each.key
   secret_permissions = [
-    "set",
-    "get",
-    "list",
-    "delete",
-    "purge",
-    "recover",
+    "Set",
+    "Get",
+    "List",
+    "Delete",
+    "Purge",
+    "Recover",
   ]
 }
 
@@ -116,8 +114,8 @@ resource "azurerm_key_vault_access_policy" "readers" {
   object_id    = each.value.object_id
 
   secret_permissions = [
-    "get",
-    "list",
+    "Get",
+    "List",
   ]
 }
 
@@ -129,21 +127,21 @@ resource "azurerm_key_vault_access_policy" "certificate_managers" {
   object_id    = each.value.object_id
 
   certificate_permissions = [
-    "get",
-    "backup",
-    "create",
-    "delete",
-    "deleteIssuers",
-    "import",
-    "manageContacts",
-    "manageIssuers",
-    "purge",
-    "recover",
-    "restore",
-    "update",
-    "setIssuers",
-    "list",
-    "getIssuers",
-    "listIssuers",
+    "Get",
+    "Backup",
+    "Create",
+    "Delete",
+    "DeleteIssuers",
+    "Import",
+    "ManageContacts",
+    "ManageIssuers",
+    "Purge",
+    "Recover",
+    "Restore",
+    "Update",
+    "SetIssuers",
+    "List",
+    "GetIssuers",
+    "ListIssuers",
   ]
 }

@@ -13,6 +13,11 @@ variable "clusters_region" {
   description = "Azure region of the cluster"
 }
 
+variable "vault_id" {
+  type        = string
+  description = "Key vault to store kube-config"
+}
+
 variable "node_size" {
   type        = string
   default     = "Standard_D2_v2"

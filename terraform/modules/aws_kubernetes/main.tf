@@ -4,7 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "3.74.0"
     }
-
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.29.0"
+    }
     random = {
       source  = "hashicorp/random"
       version = ">=3.1.0"
@@ -114,3 +117,12 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
+resource "azurerm_key_vault_secret" "secret" {
+  name         = local.cluster_name
+  value        = local.kubeconfig
+  key_vault_id = var.vault_id
+
+  tags = {
+    env = var.env
+  }
+}

@@ -51,3 +51,13 @@ resource "azurerm_kubernetes_cluster" "az_cluster" {
     env = var.env
   }
 }
+
+resource "azurerm_key_vault_secret" "secret" {
+  name         = "aks-${var.clusters_region}-${random_integer.random_id.result}"
+  value        = azurerm_kubernetes_cluster.az_cluster.kube_config_raw
+  key_vault_id = var.vault_id
+
+  tags = {
+    env = var.env
+  }
+}
