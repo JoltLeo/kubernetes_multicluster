@@ -34,6 +34,6 @@
       command: "step certificate create identity.linkerd.cluster.local issuer.crt issuer.key --profile intermediate-ca --not-after 8760h --no-password --insecure --ca root.crt --ca-key root.key"
 
     - name: Install Linkerd in each cluster
-      command: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key | kubectl --context='{{ item }}' apply -f -"
+      shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key | kubectl --context='{{ item }}' apply -f -"
       with_items: "{{ clusters_name.split(',') }}"
       
