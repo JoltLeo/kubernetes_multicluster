@@ -8,7 +8,6 @@
   
     - name: Get all kubernetes cluster contexts
       command: |
-        KUBECONFIG=\"{{kubeconfig}}\" 
         kubectl config get-contexts
       register: contexts
       
