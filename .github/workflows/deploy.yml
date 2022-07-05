@@ -66,7 +66,7 @@ jobs:
       - name: Install Linkerd
         run: |
           curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
-          sudo export PATH=$PATH:/home/runner/.linkerd2/bin
+          export PATH=$PATH:/home/runner/.linkerd2/bin
           # linkerd version
         working-directory: ${{ github.workspace}}/terraform
 
@@ -110,7 +110,7 @@ jobs:
           CONFIG_NAMES=${CONFIG_NAMES##*=}
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/, /:/g')
-          sudo export KUBECONFIG="${KUBECONFIG}:${CONFIG_NAMES}"
+          export KUBECONFIG="${KUBECONFIG}:${CONFIG_NAMES}"
           echo "$KUBECONFIG"
           echo "$CONFIG_NAMES"
         working-directory: ${{ github.workspace}}/terraform
