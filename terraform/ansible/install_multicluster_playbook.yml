@@ -5,7 +5,7 @@
   tasks:
   
     - name: Create kubernetes cluster contexts
-      command:  "kubectl config set-context {{ item }} --kubeconfig=.{{ item }}.yml"
+      command:  "kubectl config set-context {{ item }} --kubeconfig='.{{ item }}.yml'"
       changed_when: False
       with_items: "{{ clusters_name.split(',') }}"
 
