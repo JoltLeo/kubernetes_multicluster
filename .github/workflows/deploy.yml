@@ -89,11 +89,13 @@ jobs:
           # The custom subtitle for the issue
           issue-title: "Check plan and Approve"
  
-      - name: Terraform Apply
-        run: terraform apply --auto-approve
+      - name: Terraform Apply with target
+        run: terraform apply -target module.clusters_azure -target module.clusters_aws --auto-approve
         working-directory: ${{ github.workspace}}/terraform
         
-
+      - name: Terraform Apply full
+        run: terraform apply --auto-approve
+        working-directory: ${{ github.workspace}}/terraform
 
 
       # Runs a set of commands using the runners shell
