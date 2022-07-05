@@ -72,7 +72,7 @@ jobs:
 
       - name: Install step-cli
         run: |
-          apt-get install step -y
+          sudo apt-get install step -y
           step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure
           step certificate create identity.linkerd.cluster.local issuer.crt issuer.key --profile intermediate-ca --not-after 8760h --no-password --insecure --ca root.crt --ca-key root.key
         working-directory: ${{ github.workspace}}/terraform
