@@ -3,12 +3,6 @@
   serial: 1
   become: yes
   
-  pre_tasks:
-  
-    - name: Set KUBECONFIG env
-      command: "export KUBECONFIG='${KUBECONFIG}:{{ item }}'"
-      with_items: "{{ clusters_name.split(', ') }}"
-  
   tasks:
   
     - name: Get all kubernetes cluster contexts
