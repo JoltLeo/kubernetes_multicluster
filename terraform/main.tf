@@ -33,6 +33,9 @@ locals {
   kube_configs_azure_b64 = [ for k, v in module.clusters_azure : base64encode(v.kube_config) ]
   kube_configs_aws_b64   = [ for k, v in module.clusters_aws : base64encode(v.kube_config) ]
   kube_configs_b64       = concat(local.kube_configs_azure_b64, local.kube_configs_aws_b64)
+    
+  number_clusters        = range(length(local.clusters_name))
+  kubeconfig_env         = [for k, v in local.number_clusters : "${k}.yml"]
 
   clusters_name_azure = [for k, v in module.clusters_azure : v.cluster_name]
   clusters_name_aws   = [for k, v in module.clusters_aws : v.cluster_name]
@@ -107,8 +110,9 @@ module "ansible" {
   ]
   extra_vars = {
     ansible_connection = "local"
-    clusters_name      = "${join(", ", local.clusters_name)}"
-    kubeconfigs_b64    = "${join(", ", local.kube_configs_b64)}"
+    clusters_name      = "${join(",", local.clusters_name)}"
+    kubeconfigs_b64    = "${join(",", local.kube_configs_b64)}"
+    kubeconfig_env     = "${join(":", local.kubeconfig_env)}"
   }
 }
 
