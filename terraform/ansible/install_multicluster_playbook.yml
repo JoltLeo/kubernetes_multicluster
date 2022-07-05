@@ -14,6 +14,10 @@
     - name: Create kubernetes cluster contexts
       command:  "kubectl config set-context {{ item }} --kubeconfig='.{{ item }}.yml'"
       with_items: "{{ clusters_name.split(', ') }}"
+      register: set_contexts
+
+    - name: Show all kubernetes cluster contexts
+      debug: var=set_contexts.stdout
 
     - name: Get all kubernetes cluster contexts
       command:  "kubectl config get-contexts"
