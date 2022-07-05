@@ -2,32 +2,31 @@
 - hosts: all
   serial: 1
   become: yes
-
+  environment:
+    KUBECONFIG: "{{ kubeconfig_env }}"
   
-  tasks:
+  pre_tasks:
   
     - name: Create kubeconfig files
       ansible.builtin.copy:
         dest: "{{ index }}.yml"
         content: |
           {{ item | b64decode }}
-      loop: "{{ kubeconfigs_b64.split(', ') }}"
+      loop: "{{ kubeconfigs_b64.split(',') }}"
       loop_control:
         index_var: index
-      no_log: true
-
+      no_log: true  
+      
     - name: Get all kubernetes cluster contexts
       command: |
-        export KUBECONFIG="$KUBECONFIG:{{ index }}.yml"
         kubectl config get-contexts
       register: contexts
-      loop: "{{ kubeconfigs_b64.split(', ') }}"
-      loop_control:
-        index_var: index
       
     - name: Show all kubernetes cluster contexts
       debug: var=contexts.stdout
-
+  
+  tasks:
+  
     - name: Generate Linkerd certificates
       command: "step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
 
