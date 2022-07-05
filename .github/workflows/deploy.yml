@@ -116,5 +116,5 @@ jobs:
 
       - name: Run Ansible
         run: |
-          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -v
+          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG" -v
         working-directory: ${{ github.workspace}}/terraform
