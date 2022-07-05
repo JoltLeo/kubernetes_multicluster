@@ -111,7 +111,7 @@ jobs:
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/, /:/g')
           PWD=$(pwd)
-          CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES" | sed -r "s/, /$PWD\//g")
+          CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES" | sed -r 's/, /$PWD\//g')
           export KUBECONFIG="${CONFIG_NAMES}"
           echo "$KUBECONFIG"
         working-directory: ${{ github.workspace}}/terraform
