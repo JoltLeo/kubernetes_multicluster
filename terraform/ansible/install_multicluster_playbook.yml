@@ -5,19 +5,16 @@
   pre_tasks:
   
     - name: Install step-cli
-      ansible.builtin.package:
-        name: step
-        state: present
-  
+      command: |
+        wget https://dl.step.sm/gh-release/cli/docs-cli-install/v0.20.0/step-cli_0.20.0_amd64.deb
+        sudo dpkg -i step-cli_0.20.0_amd64.deb
+          
   tasks:
   
     - name: Create kubernetes cluster contexts
       command:  "kubectl config set-context {{ item }} --kubeconfig='.{{ item }}.yml'"
       with_items: "{{ clusters_name.split(', ') }}"
       register: configurecontexts
-
-    - name: Show all kubernetes cluster contexts
-      debug: var=configurecontexts.stdout
 
     - name: Get all kubernetes cluster contexts
       command:  "kubectl config get-contexts"
@@ -27,7 +24,7 @@
       debug: var=contexts.stdout
 
     - name: Generate Linkerd certificates
-      command: "xhost +local: && step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
+      command: "step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
 
     - name: Generate Linkerd issuer credentials certificates
       command: "step certificate create identity.linkerd.cluster.local issuer.crt issuer.key --profile intermediate-ca --not-after 8760h --no-password --insecure --ca root.crt --ca-key root.key"
