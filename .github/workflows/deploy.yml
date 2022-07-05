@@ -54,7 +54,7 @@ jobs:
         run: |
           curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
           export PATH=$PATH:/home/runner/.linkerd2/bin
-          linkerd version
+          # linkerd version
         working-directory: ${{ github.workspace}}/terraform
 
       - name: Terraform init
