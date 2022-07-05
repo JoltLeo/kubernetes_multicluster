@@ -6,7 +6,7 @@
   
     - name: Install step-cli
       ansible.builtin.package:
-        name: step-cli
+        name: step
         state: present
   
   tasks:
