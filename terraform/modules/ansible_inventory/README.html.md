@@ -25,7 +25,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_extra_vars"></a> [extra\_vars](#input\_extra\_vars) | Extra Parameters to ansible inventory | `map(any)` | `{}` | no |
-| <a name="input_galaxy_install_collections"></a> [galaxy\_install\_collections](#input\_galaxy\_install\_collections) | n/a | `list(string)` | <pre>[<br>  "git+https://dev.azure.com/BocomBBM/AnsibleBBM/_git/AnsibleBBM"<br>]</pre> | no |
+| <a name="input_galaxy_install_collections"></a> [galaxy\_install\_collections](#input\_galaxy\_install\_collections) | n/a | `list(string)` | `[]` | no |
 | <a name="input_galaxy_install_roles"></a> [galaxy\_install\_roles](#input\_galaxy\_install\_roles) | n/a | `list(string)` | `[]` | no |
 | <a name="input_galaxy_requirements"></a> [galaxy\_requirements](#input\_galaxy\_requirements) | n/a | `string` | `""` | no |
 | <a name="input_hosts"></a> [hosts](#input\_hosts) | Hosts List | `list(any)` | n/a | yes |

@@ -94,6 +94,7 @@ module "clusters_aws" {
 
 resource "local_file" "kubeconfig_files" {
   for_each = local.kube_configs
+
   content  = each.value
   filename = ".${each.key}.yml"
 }
@@ -109,7 +110,7 @@ module "ansible" {
   ]
   extra_vars = {
     ansible_connection = "local"
-    clusters_name      = "[${join(", ", local.clusters_name)}]"
+    clusters_name      = "${join(", ", local.clusters_name)}"
   }
 }
 
