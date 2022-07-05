@@ -1,9 +1,13 @@
 ---
 - hosts: all
   become: yes
-  environment:
-    KUBECONFIG: "{{ clusters_name | replace(', ', ':') }}"
-    
+  
+  pre tasks:
+  
+    - name: Set KUBECONFIG env
+      command: "export KUBECONFIG=\"${KUBECONFIG}:{{ item }}\""
+      with_items: "{{ clusters_name.split(', ') }}"
+  
   tasks:
   
     - name: Get all kubernetes cluster contexts
