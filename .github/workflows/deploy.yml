@@ -110,9 +110,8 @@ jobs:
           CONFIG_NAMES=${CONFIG_NAMES##*=}
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/, /:/g')
-          export KUBECONFIG="${KUBECONFIG}:${CONFIG_NAMES}"
+          export KUBECONFIG="${CONFIG_NAMES}"
           echo "$KUBECONFIG"
-          echo "$CONFIG_NAMES"
         working-directory: ${{ github.workspace}}/terraform
 
       - name: Run Ansible
