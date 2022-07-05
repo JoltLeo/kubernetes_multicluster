@@ -4,5 +4,5 @@ output "inventory" {
 }
 
 output "host_ip_list" {
-  value     = flatten(var.hosts.*.ip_address)
+  value = flatten(var.hosts.*.ip_address)
 }

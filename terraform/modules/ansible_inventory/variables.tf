@@ -33,7 +33,7 @@ variable "python_interpreter" {
 }
 
 variable "galaxy_install_collections" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 

@@ -41,9 +41,9 @@ resource "null_resource" "run_ansible" {
       export ANSIBLE_COLLECTIONS_PATHS=./
       export ANSIBLE_ROLES_PATH=./ansible_roles
 
-      %{ if var.galaxy_requirements != ""}
+      %{if var.galaxy_requirements != ""}
       ansible-galaxy install -r ${var.galaxy_requirements} --force
-      %{ endif }
+      %{endif}
 
       %{for collection in var.galaxy_install_collections~}
       ansible-galaxy collection install ${collection}
