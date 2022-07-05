@@ -104,7 +104,7 @@ jobs:
         run: terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
-      - name: Set KUBECONFIG env
+      - name: Set KUBECONFIG env and run ansible
         run: |
           CONFIG_NAMES=$(cat inventory | grep clusters_name)
           CONFIG_NAMES=${CONFIG_NAMES##*=}
@@ -114,9 +114,5 @@ jobs:
           CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
           export KUBECONFIG="${CONFIG_NAMES}"
           echo "$KUBECONFIG"
-        working-directory: ${{ github.workspace}}/terraform
-
-      - name: Run Ansible
-        run: |
           ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG" -v
         working-directory: ${{ github.workspace}}/terraform
