@@ -7,7 +7,9 @@
   tasks:
   
     - name: Get all kubernetes cluster contexts
-      command:  "KUBECONFIG='{{kubeconfig}}' kubectl config get-contexts"
+      command: |
+        KUBECONFIG="{{kubeconfig}}" 
+        kubectl config get-contexts
       register: contexts
       
     - name: Show all kubernetes cluster contexts
