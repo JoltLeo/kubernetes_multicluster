@@ -78,16 +78,16 @@ jobs:
         run: terraform plan -target module.clusters_azure -target module.clusters_aws
         working-directory: ${{ github.workspace}}/terraform
         
-      - name: Manual Workflow Approval
-        uses: trstringer/manual-approval@v1.5.0
-        with:
+      #- name: Manual Workflow Approval
+        #uses: trstringer/manual-approval@v1.5.0
+        #with:
           # Required approvers
-          approvers: JoltLeo
+          #approvers: JoltLeo
           # Secret
-          secret: ${{ github.TOKEN }}
-          minimum-approvals: 1
+          #secret: ${{ github.TOKEN }}
+          #minimum-approvals: 1
           # The custom subtitle for the issue
-          issue-title: "Check plan and Approve"
+          #issue-title: "Check plan and Approve"
  
       - name: Terraform Apply with Target
         run: terraform apply -target module.clusters_azure -target module.clusters_aws --auto-approve
