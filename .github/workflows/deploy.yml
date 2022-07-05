@@ -66,7 +66,7 @@ jobs:
       - name: Install Linkerd
         run: |
           curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
-          export PATH=$PATH:/home/runner/.linkerd2/bin
+          sudo export PATH=$PATH:/home/runner/.linkerd2/bin
           # linkerd version
         working-directory: ${{ github.workspace}}/terraform
 
