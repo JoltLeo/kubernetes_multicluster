@@ -39,6 +39,19 @@ jobs:
         with:
           # Version range or exact version of Python to use, using SemVer's version range syntax. Reads from .python-version if unset.
           python-version: '3.x'
+          
+      - name: Setup pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py --user
+        working-directory: ${{ github.workspace}}/terraform
+
+      - name: Install Ansible
+        run: |
+          python3 -m pip install --user ansible
+          ansible --version
+          ansible-galaxy collection install kubernetes.core
+        working-directory: ${{ github.workspace}}/terraform
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
