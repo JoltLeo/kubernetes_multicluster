@@ -51,7 +51,9 @@ jobs:
           version: latest
 
       - name: Install Linkerd
-        run: curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
+          linkerd version
         working-directory: ${{ github.workspace}}/terraform
 
       - name: Terraform init
