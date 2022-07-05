@@ -2,6 +2,8 @@
 - hosts: all
   serial: 1
   become: yes
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   
   tasks:
   
