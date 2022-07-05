@@ -2,7 +2,7 @@
 - hosts: all
   become: yes
   
-  pre tasks:
+  pre_tasks:
   
     - name: Set KUBECONFIG env
       command: "export KUBECONFIG=\"${KUBECONFIG}:{{ item }}\""
