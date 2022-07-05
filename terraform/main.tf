@@ -96,7 +96,7 @@ resource "local_file" "kubeconfig_files" {
   for_each = local.kube_configs
 
   content  = each.value
-  filename = "${each.key}"
+  filename = "${each.key}.yml"
 }
 
 module "ansible" {
