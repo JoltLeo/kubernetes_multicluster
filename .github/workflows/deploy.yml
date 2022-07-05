@@ -96,3 +96,8 @@ jobs:
       - name: Terraform Apply Full
         run: terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
+
+      - name: Run Ansible
+        run: |
+          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory
+        working-directory: ${{ github.workspace}}/terraform
