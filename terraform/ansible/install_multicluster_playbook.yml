@@ -54,7 +54,7 @@
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check clusters
-      debug: var=check_clusters.stdout
+      debug: var=check_clusters.stdout_lines
 
     - name: Install Linkerd multicluster
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
@@ -70,7 +70,7 @@
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check clusters
-      debug: var=check_gateway_clusters.stdout
+      debug: var=check_gateway_clusters.stdout_lines
 
     - name: Link Linkerd clusters
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ master_cluster }} --context='{{ master_cluster }}' | kubectl --context='{{ item }}' apply -f -"
@@ -87,4 +87,4 @@
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check clusters
-      debug: var=check_multicluster.stdout
+      debug: var=check_multicluster.stdout_lines
