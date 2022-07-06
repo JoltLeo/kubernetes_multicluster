@@ -111,6 +111,7 @@ module "ansible" {
   extra_vars = {
     ansible_connection = "local"
     clusters_name      = "${join(",", local.clusters_name)}"
+    master_cluster     = "${local.clusters_name[0]}"
     kubeconfigs_b64    = "${join(",", local.kube_configs_b64)}"
     kubeconfig_env     = "${join(":", local.kubeconfig_env)}"
   }

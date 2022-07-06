@@ -1,6 +1,5 @@
 ---
 - hosts: all
-  serial: 1
   become: yes
   environment:
     KUBECONFIG: "{{ kubeconfig_env }}"
@@ -36,4 +35,56 @@
     - name: Install Linkerd in each cluster
       shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
       with_items: "{{ clusters_name.split(',') }}"
-      
+
+    - name: Sleep for 30 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 30
+
+    - name: Install Linkerd viz cluster
+      shell: "/home/runner/.linkerd2/bin/linkerd viz install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Sleep for 30 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 30
+
+    - name: Check clusters
+      shell: "/home/runner/.linkerd2/bin/linkerd check --context='{{ item }}'"
+      register: check_clusters
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Show Check clusters
+      debug: var=check_clusters.stdout
+
+    - name: Install Linkerd multicluster
+      shell: "/home/runner/.linkerd2/bin/linkerd multicluster install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Sleep for 30 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 30
+
+    - name: Check gateway on clusters
+      shell: "kubectl --context='{{ item }}' -n linkerd-multicluster rollout status deploy/linkerd-gateway"
+      register: check_gateway_clusters
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Show Check clusters
+      debug: var=check_gateway_clusters.stdout
+
+    - name: Link Linkerd clusters
+      shell: "/home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ master_cluster }} --context='{{ master_cluster }}' | kubectl --context='{{ item }}' apply -f -"
+      loop: "{{ clusters_name.split(',') }}"
+      when: item != master_cluster
+
+    - name: Sleep for 30 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 30
+
+    - name: Check multicluster
+      shell: "/home/runner/.linkerd2/bin/linkerd multicluster check --context='{{ item }}'"
+      register: check_multicluster
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Show Check clusters
+      debug: var=check_multicluster.stdout
