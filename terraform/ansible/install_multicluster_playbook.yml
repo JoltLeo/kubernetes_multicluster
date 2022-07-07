@@ -81,10 +81,18 @@
       ansible.builtin.wait_for:
         timeout: 30
 
-    - name: Check multicluster
-      shell: "/home/runner/.linkerd2/bin/linkerd multicluster check --context='{{ item }}'"
-      register: check_multicluster
+    - name: Install nginx on clusters
+      shell: "kubectl --context='{{ item }}' apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
+      register: check_nginx
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check clusters
-      debug: var=check_multicluster.stdout_lines
+      debug: var=check_nginx
+
+    - name: Sleep for 30 seconds and continue with play
+      ansible.builtin.wait_for:
+        timeout: 30
+
+    - name: Expose dashboards
+      shell: "kubectl --context='{{ item }}' apply -f ./ansible/deployments/expose_dashboard.yml"
+      with_items: "{{ clusters_name.split(',') }}"
