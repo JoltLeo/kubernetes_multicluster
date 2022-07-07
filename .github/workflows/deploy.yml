@@ -114,5 +114,5 @@ jobs:
           CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
           export KUBECONFIG="${CONFIG_NAMES}.yml"
           echo "$KUBECONFIG"
-          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG" -v
+          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG"
         working-directory: ${{ github.workspace}}/terraform
