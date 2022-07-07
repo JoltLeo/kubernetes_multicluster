@@ -25,23 +25,6 @@ terraform {
   required_version = ">=1.0.5"
 }
 
-locals {
-  kube_configs_azure = { for k, v in module.clusters_azure : v.cluster_name => v.kube_config }
-  kube_configs_aws   = { for k, v in module.clusters_aws : v.cluster_name => v.kube_config }
-  kube_configs       = merge(local.kube_configs_azure, local.kube_configs_aws)
-
-  kube_configs_azure_b64 = [ for k, v in module.clusters_azure : base64encode(v.kube_config) ]
-  kube_configs_aws_b64   = [ for k, v in module.clusters_aws : base64encode(v.kube_config) ]
-  kube_configs_b64       = concat(local.kube_configs_azure_b64, local.kube_configs_aws_b64)
-    
-  number_clusters        = range(length(local.clusters_name))
-  kubeconfig_env         = [for k, v in local.number_clusters : "${k}.yml"]
-
-  clusters_name_azure = [for k, v in module.clusters_azure : v.cluster_name]
-  clusters_name_aws   = [for k, v in module.clusters_aws : v.cluster_name]
-  clusters_name       = concat(local.clusters_name_azure, local.clusters_name_aws)
-}
-
 provider "azurerm" {
   skip_provider_registration = true
   features {
@@ -63,9 +46,29 @@ provider "azuread" {
 }
 
 provider "aws" {
-  region     = var.aws_cluster_region != "" ? var.aws_cluster_region : "sa-east-1"
+  region     = var.aws_cluster_region != "" ? var.aws_cluster_region : "us-east-1"
   access_key = "#{AWS_ACCESS_KEY}#"
   secret_key = "#{AWS_SECRET_KEY}#"
+}
+
+locals {
+  infra                       = yamldecode(file("clusters.yml"))
+  az_clusters_regions         = tolist(keys(local.infra.azure_clusters))
+  aws_clusters_regions        = tolist(keys(local.infra.aws_clusters))
+  aws_clusters_vpc_cidr       = [for i in local.infra.aws_clusters : i["vpc_cidr"]]
+  aws_clusters_vpc_private_ip = [for i in local.infra.aws_clusters : i["vpc_private_ip"]]
+  aws_clusters_vpc_public_ip  = [for i in local.infra.aws_clusters : i["vpc_public_ip"]]
+
+  kube_configs_azure_b64 = [for k, v in module.clusters_azure : base64encode(v.kube_config)]
+  kube_configs_aws_b64   = [for k, v in module.clusters_aws : base64encode(v.kube_config)]
+  kube_configs_b64       = concat(local.kube_configs_azure_b64, local.kube_configs_aws_b64)
+
+  number_clusters = range(length(local.clusters_name))
+  kubeconfig_env  = [for k, v in local.number_clusters : "${k}.yml"]
+
+  clusters_name_azure = [for k, v in module.clusters_azure : v.cluster_name]
+  clusters_name_aws   = [for k, v in module.clusters_aws : v.cluster_name]
+  clusters_name       = concat(local.clusters_name_azure, local.clusters_name_aws)
 }
 
 module "key_vault" {
@@ -77,11 +80,11 @@ module "key_vault" {
 }
 
 module "clusters_azure" {
-  for_each = toset(var.azure_cluster_regions)
-  source   = "./modules/az_kubernetes"
+  count  = length(local.az_clusters_regions)
+  source = "./modules/az_kubernetes"
 
   vault_id        = module.key_vault.key_vault_id
-  clusters_region = each.value
+  clusters_region = element(local.az_clusters_regions, count.index)
   env             = "prd"
   depends_on = [
     module.key_vault
@@ -89,14 +92,16 @@ module "clusters_azure" {
 }
 
 module "clusters_aws" {
-  for_each = var.aws_cluster_region != "" ? toset([var.aws_cluster_region]) : []
-  source   = "./modules/aws_kubernetes"
+  count  = length(local.aws_clusters_regions)
+  source = "./modules/aws_kubernetes"
+
+  cluster_region = element(local.aws_clusters_regions, count.index)
+  vpc_cidr       = element(local.aws_clusters_vpc_cidr, count.index)
+  vpc_private_ip = element(local.aws_clusters_vpc_private_ip, count.index)
+  vpc_public_ip  = element(local.aws_clusters_vpc_public_ip, count.index)
 
   vault_id = module.key_vault.key_vault_id
   env      = "prd"
-  depends_on = [
-    module.key_vault
-  ]
 }
 
 module "ansible" {
