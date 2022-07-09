@@ -53,11 +53,11 @@ provider "aws" {
 
 locals {
   infra                       = yamldecode(file("clusters.yml"))
-  az_clusters_regions         = length(local.infra.azure_clusters) != 0 ? tolist(keys(local.infra.azure_clusters)) : ""
-  aws_clusters_regions        = length(local.infra.aws_clusters) != 0 ? tolist(keys(local.infra.aws_clusters)) : ""
-  aws_clusters_vpc_cidr       = length(local.infra.aws_clusters) != 0 ? [for i in local.infra.aws_clusters : i["vpc_cidr"]] : ""
-  aws_clusters_vpc_private_ip = length(local.infra.aws_clusters) != 0 ? [for i in local.infra.aws_clusters : i["vpc_private_ip"]] : ""
-  aws_clusters_vpc_public_ip  = length(local.infra.aws_clusters) != 0 ? [for i in local.infra.aws_clusters : i["vpc_public_ip"]] : ""
+  az_clusters_regions         = local.infra.azure_clusters != null ? tolist(keys(local.infra.azure_clusters)) : []
+  aws_clusters_regions        = local.infra.aws_clusters != null ? tolist(keys(local.infra.aws_clusters)) : []
+  aws_clusters_vpc_cidr       = local.infra.aws_clusters != null ? [for i in local.infra.aws_clusters : i["vpc_cidr"]] : []
+  aws_clusters_vpc_private_ip = local.infra.aws_clusters != null ? [for i in local.infra.aws_clusters : i["vpc_private_ip"]] : []
+  aws_clusters_vpc_public_ip  = local.infra.aws_clusters != null ? [for i in local.infra.aws_clusters : i["vpc_public_ip"]] : []
 
   kube_configs_azure_b64 = [for k, v in module.clusters_azure : base64encode(v.kube_config)]
   kube_configs_aws_b64   = [for k, v in module.clusters_aws : base64encode(v.kube_config)]
