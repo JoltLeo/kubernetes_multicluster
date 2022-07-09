@@ -101,7 +101,7 @@ jobs:
         #working-directory: ${{ github.workspace}}/terraform
         
       - name: Terraform Apply Full
-        run: terraform apply --auto-approve
+        run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
       - name: Set KUBECONFIG env and run ansible
