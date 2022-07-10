@@ -50,11 +50,12 @@
 
     - name: Check clusters
       shell: "/home/runner/.linkerd2/bin/linkerd check --context='{{ item }}'"
-      register: check_clusters
+      register: "check_clusters_{{ item }}"
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check clusters
-      debug: var=check_clusters.stdout_lines
+      debug: "var=check_clusters_{{ item }}.stdout_lines"
+      with_items: "{{ clusters_name.split(',') }}"
 
     - name: Install Linkerd multicluster
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
@@ -66,11 +67,12 @@
 
     - name: Check gateway on clusters
       shell: "kubectl --context='{{ item }}' -n linkerd-multicluster rollout status deploy/linkerd-gateway"
-      register: check_gateway_clusters
+      register: "check_gateway_{{ item }}"
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Show Check clusters
-      debug: var=check_gateway_clusters.stdout_lines
+    - name: Show Check gateways
+      debug: "var=check_gateway_{{ item }}.stdout_lines"
+      with_items: "{{ clusters_name.split(',') }}"
 
     - name: Link Linkerd clusters
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ master_cluster }} --context='{{ master_cluster }}' | kubectl --context='{{ item }}' apply -f -"
@@ -83,16 +85,17 @@
 
     - name: Install nginx on clusters
       shell: "kubectl --context='{{ item }}' apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
-      register: check_nginx
+      register: "check_nginx_{{ item }}"
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Show Check clusters
-      debug: var=check_nginx
+    - name: Show Check nginx
+      debug: "var=check_nginx_{{ item }}.stdout_lines"
+      with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
         timeout: 60
 
     - name: Expose dashboards
-      shell: "kubectl --context='{{ item }}' apply -f ./ansible/deployments/expose_dashboard.yml"
+      shell: "kubectl --context='{{ item }}' apply -f /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/deployments/expose_dashboard.yml"
       with_items: "{{ clusters_name.split(',') }}"

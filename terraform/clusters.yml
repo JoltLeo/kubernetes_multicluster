@@ -1,5 +1,6 @@
 azure_clusters:
   eastus:
+  westus:
   brazilsouth:
 
 aws_clusters:
