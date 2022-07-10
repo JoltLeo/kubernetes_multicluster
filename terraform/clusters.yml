@@ -1,6 +1,6 @@
 azure_clusters:
   eastus:
-  #brazilsouth:
+  brazilsouth:
 
 aws_clusters:
   #1:
