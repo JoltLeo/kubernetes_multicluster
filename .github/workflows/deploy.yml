@@ -109,7 +109,7 @@ jobs:
           CONFIG_NAMES=$(cat inventory | grep clusters_name)
           CONFIG_NAMES=${CONFIG_NAMES##*=}
           CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
-          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/, /.yml:\/home\/runner\/work\/kubernetes_multicluster\/kubernetes_multicluster\/terraform\//g')
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/,/.yml:\/home\/runner\/work\/kubernetes_multicluster\/kubernetes_multicluster\/terraform\//g')
           PWD=$(pwd)
           CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
           export KUBECONFIG="${CONFIG_NAMES}.yml"
