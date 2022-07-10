@@ -95,7 +95,7 @@ module "clusters_aws" {
   count  = length(local.aws_clusters_regions)
   source = "./modules/aws_kubernetes"
 
-  cluster_region = element(local.aws_clusters_regions, count.index)
+  cluster_region = "us-east-1" #element(local.aws_clusters_regions, count.index)
   vpc_cidr       = element(local.aws_clusters_vpc_cidr, count.index)
   vpc_private_ip = element(local.aws_clusters_vpc_private_ip, count.index)
   vpc_public_ip  = element(local.aws_clusters_vpc_public_ip, count.index)
