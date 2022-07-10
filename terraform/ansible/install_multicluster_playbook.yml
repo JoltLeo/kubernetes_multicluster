@@ -36,7 +36,7 @@
       shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 30 seconds and continue with play
+    - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
         timeout: 60
 
@@ -44,9 +44,9 @@
       shell: "/home/runner/.linkerd2/bin/linkerd viz install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 30 seconds and continue with play
+    - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
-        timeout: 30
+        timeout: 60
 
     - name: Check clusters
       shell: "/home/runner/.linkerd2/bin/linkerd check --context='{{ item }}'"
@@ -60,9 +60,9 @@
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 30 seconds and continue with play
+    - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
-        timeout: 30
+        timeout: 60
 
     - name: Check gateway on clusters
       shell: "kubectl --context='{{ item }}' -n linkerd-multicluster rollout status deploy/linkerd-gateway"
@@ -77,9 +77,9 @@
       loop: "{{ clusters_name.split(',') }}"
       when: item != master_cluster
 
-    - name: Sleep for 30 seconds and continue with play
+    - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
-        timeout: 30
+        timeout: 60
 
     - name: Install nginx on clusters
       shell: "kubectl --context='{{ item }}' apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
@@ -89,9 +89,9 @@
     - name: Show Check clusters
       debug: var=check_nginx
 
-    - name: Sleep for 30 seconds and continue with play
+    - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
-        timeout: 30
+        timeout: 60
 
     - name: Expose dashboards
       shell: "kubectl --context='{{ item }}' apply -f ./ansible/deployments/expose_dashboard.yml"
