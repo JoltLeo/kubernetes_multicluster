@@ -19,7 +19,6 @@
     - name: Get all kubernetes cluster contexts
       command: |
         kubectl config get-contexts
-        pwd
       register: contexts
       
     - name: Show all kubernetes cluster contexts
