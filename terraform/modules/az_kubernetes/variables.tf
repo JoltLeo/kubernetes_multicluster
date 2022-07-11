@@ -26,7 +26,7 @@ variable "node_size" {
 
 variable "kubernetes_version" {
   type        = string
-  default     = "1.21.7"
+  default     = "1.22.6"
   description = "Kubernetes cluster version"
 }
 
