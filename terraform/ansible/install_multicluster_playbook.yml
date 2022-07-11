@@ -36,9 +36,9 @@
       shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 60 seconds and continue with play
+    - name: Sleep for 120 seconds and continue with play
       ansible.builtin.wait_for:
-        timeout: 90
+        timeout: 120
 
     - name: Install Linkerd viz cluster
       shell: "/home/runner/.linkerd2/bin/linkerd viz install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
