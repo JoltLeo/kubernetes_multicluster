@@ -38,7 +38,7 @@
 
     - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
-        timeout: 60
+        timeout: 90
 
     - name: Install Linkerd viz cluster
       shell: "/home/runner/.linkerd2/bin/linkerd viz install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
