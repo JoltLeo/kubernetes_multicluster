@@ -24,7 +24,7 @@ variable "vpc_public_ip" {
 
 variable "kubernetes_version" {
   type        = string
-  default     = "1.21"
+  default     = "1.22.6"
   description = "Kubernetes cluster version"
 }
 
