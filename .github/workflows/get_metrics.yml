@@ -51,9 +51,6 @@ jobs:
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
-      - name: Terraform Destroy kv 1
-        run: terraform destroy --auto-approve -target module.key_vault
-        working-directory: ${{ github.workspace}}/terraform
   
       - name: Terraform Destroy 1
         run: terraform destroy --auto-approve
@@ -63,9 +60,6 @@ jobs:
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
-      - name: Terraform Destroy kv 2
-        run: terraform destroy --auto-approve -target module.key_vault
-        working-directory: ${{ github.workspace}}/terraform
   
       - name: Terraform Destroy 2
         run: terraform destroy --auto-approve
@@ -75,9 +69,6 @@ jobs:
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
-      - name: Terraform Destroy kv 3
-        run: terraform destroy --auto-approve -target module.key_vault
-        working-directory: ${{ github.workspace}}/terraform
   
       - name: Terraform Destroy 3
         run: terraform destroy --auto-approve
