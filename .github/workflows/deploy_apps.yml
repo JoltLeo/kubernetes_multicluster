@@ -1,0 +1,104 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy Multicluster
+
+env:
+  RESOURCE_GROUP: "tfstate-rg"
+  STORAGE_ACCOUNT: "tfstatepfaccount"
+  CONTAINER_NAME: "tfstate-container"
+  KEY: "main.tfstate"
+  APP_SECRET: ${{ secrets.AZURE_APP_SECRET }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+  
+on:
+#  push:
+#    branches: [ main ]
+#  schedule:
+#    - cron: '10 * * * *'
+
+  workflow_dispatch:
+
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Replace Tokens
+        # You may pin to the exact commit or the version.
+        # uses: cschleiden/replace-tokens@4f7e3d67f3ff2317ae650842145cdbaefba65189
+        uses: cschleiden/replace-tokens@v1.1
+        with:
+          files: '["**/*"]'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4.0.0
+        with:
+          # Version range or exact version of Python to use, using SemVer's version range syntax. Reads from .python-version if unset.
+          python-version: '3.x'
+          
+      - name: Setup pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py --user
+        working-directory: ${{ github.workspace}}/terraform
+
+      - name: Install Ansible
+        run: |
+          python3 -m pip install --user ansible
+          ansible --version
+          ansible-galaxy collection install kubernetes.core
+        working-directory: ${{ github.workspace}}/terraform
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: latest
+          
+      - name: Install Kubectl
+        uses: Azure/setup-kubectl@v2.1
+        with:
+          version: latest
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ github.workspace}}/terraform
+        
+      - name: Terraform Plan
+        run: terraform plan #-target module.clusters_azure -target module.clusters_aws
+        working-directory: ${{ github.workspace}}/terraform
+        
+      #- name: Manual Workflow Approval
+        #uses: trstringer/manual-approval@v1.5.0
+        #with:
+          # Required approvers
+          #approvers: JoltLeo
+          # Secret
+          #secret: ${{ github.TOKEN }}
+          #minimum-approvals: 1
+          # The custom subtitle for the issue
+          #issue-title: "Check plan and Approve"
+ 
+      #- name: Terraform Apply with Target
+        #run: terraform apply -target module.clusters_azure -target module.clusters_aws --auto-approve
+        #working-directory: ${{ github.workspace}}/terraform
+        
+      - name: Terraform Apply Full
+        run: time terraform apply --auto-approve
+        working-directory: ${{ github.workspace}}/terraform
+
+      - name: Set KUBECONFIG env and run ansible
+        run: |
+          CONFIG_NAMES=$(cat inventory | grep clusters_name)
+          CONFIG_NAMES=${CONFIG_NAMES##*=}
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/,/.yml:\/home\/runner\/work\/kubernetes_multicluster\/kubernetes_multicluster\/terraform\//g')
+          PWD=$(pwd)
+          CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
+          export KUBECONFIG="${CONFIG_NAMES}.yml"
+          echo "$KUBECONFIG"
+          ansible-playbook ./ansible/deploy_apps.yml -i inventory -e "kubeconfig=$KUBECONFIG"
+        working-directory: ${{ github.workspace}}/terraform

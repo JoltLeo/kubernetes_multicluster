@@ -1,0 +1,39 @@
+---
+- hosts: all
+  become: yes
+
+  pre_tasks:
+  
+    - name: Create kubeconfig files
+      ansible.builtin.copy:
+        dest: "{{ index }}.yml"
+        content: |
+          {{ item | b64decode }}
+      loop: "{{ kubeconfigs_b64.split(',') }}"
+      loop_control:
+        index_var: index
+      no_log: true  
+      
+    - name: Get all kubernetes cluster contexts
+      command: |
+        kubectl config get-contexts
+      register: contexts
+      
+    - name: Show all kubernetes cluster contexts
+      debug: var=contexts.stdout  
+
+  tasks:
+    - name: Generate Linkerd certificates
+      command: "step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
+
+    - name: Get app files to deploy
+      ansible.builtin.find:
+        paths: /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/applications
+        file_type: file
+        recurse: yes
+        patterns: '*.yml'
+      register: app_files
+
+    - name: Deploy apps
+      shell: "kubectl --context='{{ master_cluster }}' apply -f {{ item.path }}"
+      with_items: "{{ app_files }}"
