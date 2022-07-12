@@ -1,0 +1,18 @@
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-backend-api
+  namespace: get-api
+  labels:
+    mirror.linkerd.io/exported: "true"
+    app: my-backend-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: my-backend-api

@@ -1,0 +1,22 @@
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-backend-api
+  namespace: get-api
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+  labels:
+    mirror.linkerd.io/exported: "true"
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /user/
+        pathType: Prefix
+        backend:
+          service:
+            name: my-backend-api
+            port:
+              number: 80

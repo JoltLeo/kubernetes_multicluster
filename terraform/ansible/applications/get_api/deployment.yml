@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-backend-api
+  namespace: get-api
+  labels:
+    app: my-backend-api
+    mirror.linkerd.io/exported: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-backend-api
+  template:
+    metadata:
+      labels:
+        app: my-backend-api
+    spec:
+      containers:
+      - name: my-backend-api
+        image: andyy5/my-backend-api
