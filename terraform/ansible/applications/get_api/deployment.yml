@@ -59,6 +59,7 @@ metadata:
   labels:
     mirror.linkerd.io/exported: "true"
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
