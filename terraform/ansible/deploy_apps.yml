@@ -23,9 +23,6 @@
       debug: var=contexts.stdout  
 
   tasks:
-    - name: Generate Linkerd certificates
-      command: "step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
-
     - name: Get app files to deploy
       ansible.builtin.find:
         paths: /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/applications
