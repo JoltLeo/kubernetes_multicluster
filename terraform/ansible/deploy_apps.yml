@@ -25,12 +25,25 @@
       debug: var=contexts.stdout  
 
   tasks:
+    - name: Get namespace files to deploy
+      ansible.builtin.find:
+        paths: /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/applications
+        file_type: file
+        recurse: yes
+        patterns: 'namespace.yml'
+      register: namespace_files
+
+    - name: Deploy namespaces
+      shell: "kubectl --context='{{ master_cluster }}' apply -f {{ item.path }}"
+      with_items: "{{ namespace_files.files }}"
+
     - name: Get app files to deploy
       ansible.builtin.find:
         paths: /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/applications
         file_type: file
         recurse: yes
         patterns: '*.yml'
+        exlude: 'namespace.yml'
       register: app_files
 
     - name: Deploy apps
