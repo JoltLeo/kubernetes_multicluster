@@ -117,12 +117,12 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
-resource "azurerm_key_vault_secret" "secret" {
-  name         = local.cluster_name
-  value        = local.kubeconfig
-  key_vault_id = var.vault_id
+#resource "azurerm_key_vault_secret" "secret" {
+#  name         = local.cluster_name
+#  value        = local.kubeconfig
+#  key_vault_id = var.vault_id
 
-  tags = {
-    env = var.env
-  }
-}
+#  tags = {
+#    env = var.env
+#  }
+#}
