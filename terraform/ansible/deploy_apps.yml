@@ -35,4 +35,4 @@
 
     - name: Deploy apps
       shell: "kubectl --context='{{ master_cluster }}' apply -f {{ item.path }}"
-      with_items: "{{ app_files }}"
+      with_items: "{{ app_files.files }}"
