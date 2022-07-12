@@ -1,6 +1,8 @@
 ---
 - hosts: all
   become: yes
+  environment:
+    KUBECONFIG: "{{ kubeconfig_env }}"
 
   pre_tasks:
   

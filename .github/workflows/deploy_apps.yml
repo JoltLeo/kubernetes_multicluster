@@ -100,5 +100,5 @@ jobs:
           CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
           export KUBECONFIG="${CONFIG_NAMES}.yml"
           echo "$KUBECONFIG"
-          ansible-playbook ./ansible/deploy_apps.yml -i inventory -e "kubeconfig=$KUBECONFIG"
+          ansible-playbook ./ansible/deploy_apps.yml -i inventory -e "kubeconfig=$KUBECONFIG" -v
         working-directory: ${{ github.workspace}}/terraform
