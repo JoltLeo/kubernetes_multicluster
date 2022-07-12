@@ -84,7 +84,9 @@
       with_items: "{{ check_gateway.results }}"
 
     - name: Link Linkerd clusters
-      shell: "/home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ master_cluster }} --context='{{ master_cluster }}' --set 'enableHeadlessServices=true' | kubectl --context='{{ item }}' apply -f -"
+      shell: |
+        /home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ master_cluster }} --context='{{ master_cluster }}' --set 'enableHeadlessServices=true' | kubectl --context='{{ item }}' apply -f -
+        /home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ item }} --context='{{ item }}' --set 'enableHeadlessServices=true' | kubectl --context='{{ master_cluster }}' apply -f -
       loop: "{{ clusters_name.split(',') }}"
       when: item != master_cluster
 
