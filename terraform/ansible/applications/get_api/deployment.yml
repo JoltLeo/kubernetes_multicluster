@@ -4,7 +4,7 @@ kind: Namespace
 metadata:
   name: get-api
   labels:
-    mirror.linkerd.io/exported: true
+    mirror.linkerd.io/exported: 'true'
 
 ---
 apiVersion: apps/v1
@@ -14,7 +14,7 @@ metadata:
   namespace: get-api
   labels:
     app: my-backend-api
-    mirror.linkerd.io/exported: true
+    mirror.linkerd.io/exported: 'true'
 spec:
   replicas: 1
   selector:
@@ -22,6 +22,8 @@ spec:
       app: my-backend-api
   template:
     metadata:
+      annotations:
+        linkerd.io/inject: enabled
       labels:
         app: my-backend-api
     spec:
@@ -36,7 +38,7 @@ metadata:
   name: my-backend-api
   namespace: get-api
   labels:
-    mirror.linkerd.io/exported: true
+    mirror.linkerd.io/exported: 'true'
     app: my-backend-api
 spec:
   type: ClusterIP
@@ -57,7 +59,7 @@ metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
   labels:
-    mirror.linkerd.io/exported: true
+    mirror.linkerd.io/exported: 'true'
 spec:
   ingressClassName: nginx
   rules:
