@@ -28,18 +28,24 @@
   
     - name: Generate Linkerd certificates
       command: "step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
+      register: result_1
       retries: 2
       delay: 10
+      until: result_1 is not failed
 
     - name: Generate Linkerd issuer credentials certificates
       command: "step certificate create identity.linkerd.cluster.local issuer.crt issuer.key --profile intermediate-ca --not-after 8760h --no-password --insecure --ca root.crt --ca-key root.key"
+      register: result_2
       retries: 2
       delay: 10
+      until: result_2 is not failed
 
     - name: Install Linkerd in each cluster
       shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      register: result_3
       retries: 2
       delay: 60
+      until: result_3 is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 120 seconds and continue with play
@@ -50,6 +56,9 @@
       shell: "/home/runner/.linkerd2/bin/linkerd check --context='{{ item }}'"
       register: "check_clusters1"
       with_items: "{{ clusters_name.split(',') }}"
+      retries: 2
+      delay: 60
+      until: check_clusters1 is not failed
 
     - name: Show Check clusters
       debug: "msg={{ item.stdout_lines }}"
@@ -57,8 +66,10 @@
 
     - name: Install Linkerd viz cluster
       shell: "/home/runner/.linkerd2/bin/linkerd viz install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      register: result_4
       retries: 2
       delay: 60
+      until: result_4 is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 120 seconds and continue with play
@@ -76,8 +87,10 @@
 
     - name: Install Linkerd multicluster
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      register: result_5
       retries: 2
       delay: 60
+      until: result_5 is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 60 seconds and continue with play
@@ -99,30 +112,27 @@
         /home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ item }} --context='{{ item }}' --set 'enableHeadlessServices=true' | kubectl --context='{{ master_cluster }}' apply -f -
       loop: "{{ clusters_name.split(',') }}"
       when: item != master_cluster
+      register: result_6
       retries: 2
       delay: 60
-
-    - name: Sleep for 60 seconds and continue with play
-      ansible.builtin.wait_for:
-        timeout: 60
+      until: result_6 is not failed
 
     - name: Install nginx on clusters
       shell: "kubectl --context='{{ item }}' apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
       register: "check_nginx"
       with_items: "{{ clusters_name.split(',') }}"
       retries: 2
-      delay: 30
+      delay: 60
+      until: check_nginx is not failed
 
     - name: Show Check nginx
       debug: "msg={{ item.stdout_lines }}"
       with_items: "{{ check_nginx.results }}"
 
-    - name: Sleep for 60 seconds and continue with play
-      ansible.builtin.wait_for:
-        timeout: 60
-
     - name: Expose dashboards
       shell: "kubectl --context='{{ item }}' apply -f /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/deployments/expose_dashboard.yml"
       with_items: "{{ clusters_name.split(',') }}"
+      register: result_7
       retries: 2
-      delay: 30
+      delay: 60
+      until: result_7 is not failed
