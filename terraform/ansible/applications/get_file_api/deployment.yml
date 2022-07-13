@@ -1,0 +1,107 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: file-storage-volume
+  namespace: fileserver
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/opt/filecontainer"
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: file-storage-claim
+  namespace: fileserver
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: file-storage
+  namespace: fileserver
+  labels:
+    app: file-storage
+spec:
+  selector:
+    matchLabels:
+      app: file-storage
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: file-storage
+      annotations:
+        linkerd.io/inject: enabled
+    spec:
+      containers:
+      - name: file-storage-container
+        image: nginx
+        ports:
+        - containerPort: 80
+          name: file-server
+        volumeMounts:
+          - mountPath: "/usr/share/nginx/html"
+            name: file-storage-volume
+        imagePullPolicy: Always
+        resources: {}
+      volumes:
+        - name: file-storage-volume
+          persistentVolumeClaim:
+           claimName: file-storage-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: file-storage
+    mirror.linkerd.io/exported: 'true'
+  name: file-storage
+  namespace: fileserver
+spec:
+  ports:
+    - name: http
+      port: 80
+  selector:
+    app: file-storage
+status:
+  loadBalancer: {}
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fileserver-ingress
+  namespace: fileserver
+  annotations:
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /dl
+        pathType: Prefix
+        backend:
+          service:
+            name: file-storage
+            port:
+              number: 80

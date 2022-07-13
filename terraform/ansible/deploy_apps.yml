@@ -34,8 +34,10 @@
       register: namespace_files
 
     - name: Deploy namespaces
-      shell: "kubectl --context='{{ master_cluster }}' apply -f {{ item.path }}"
-      with_items: "{{ namespace_files.files }}"
+      shell: "kubectl --context='{{ item[1] }}' apply -f {{ item[0].path }}"
+      with_nested: 
+        - "{{ namespace_files.files }}"
+        - "{{ clusters_name.split(',') }}"
 
     - name: Get app files to deploy
       ansible.builtin.find:
@@ -47,5 +49,7 @@
       register: app_files
 
     - name: Deploy apps
-      shell: "kubectl --context='{{ master_cluster }}' apply -f {{ item.path }}"
-      with_items: "{{ app_files.files }}"
+      shell: "kubectl --context='{{ item[1] }}' apply -f {{ item[0].path }}"
+      with_nested: 
+        - "{{ app_files.files }}"
+        - "{{ clusters_name.split(',') }}"

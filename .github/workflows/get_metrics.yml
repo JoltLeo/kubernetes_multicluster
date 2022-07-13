@@ -33,11 +33,47 @@ jobs:
         uses: cschleiden/replace-tokens@v1.1
         with:
           files: '["**/*"]'
+      - name: Setup Python
+        uses: actions/setup-python@v4.0.0
+        with:
+          # Version range or exact version of Python to use, using SemVer's version range syntax. Reads from .python-version if unset.
+          python-version: '3.x'
+          
+      - name: Setup pip3
+        run: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py --user
+        working-directory: ${{ github.workspace}}/terraform
+
+      - name: Install Ansible
+        run: |
+          python3 -m pip install --user ansible
+          ansible --version
+          ansible-galaxy collection install kubernetes.core
+        working-directory: ${{ github.workspace}}/terraform
 
       - name: Install Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: latest
+          
+      - name: Install Kubectl
+        uses: Azure/setup-kubectl@v2.1
+        with:
+          version: latest
+
+      - name: Install Linkerd
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
+          export PATH=$PATH:/home/runner/.linkerd2/bin
+          # linkerd version
+        working-directory: ${{ github.workspace}}/terraform
+
+      - name: Install step-cli
+        run: |
+          wget https://dl.step.sm/gh-release/cli/docs-cli-install/v0.20.0/step-cli_0.20.0_amd64.deb
+          sudo dpkg -i step-cli_0.20.0_amd64.deb
+        working-directory: ${{ github.workspace}}/terraform
           
       - name: Terraform Init
         run: terraform init
@@ -51,6 +87,18 @@ jobs:
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
+      - name: Set KUBECONFIG env and run ansible 1
+        run: |
+          CONFIG_NAMES=$(cat inventory | grep clusters_name)
+          CONFIG_NAMES=${CONFIG_NAMES##*=}
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/,/.yml:\/home\/runner\/work\/kubernetes_multicluster\/kubernetes_multicluster\/terraform\//g')
+          PWD=$(pwd)
+          CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
+          export KUBECONFIG="${CONFIG_NAMES}.yml"
+          echo "$KUBECONFIG"
+          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG"
+        working-directory: ${{ github.workspace}}/terraform
   
       - name: Terraform Destroy 1
         run: terraform destroy --auto-approve
@@ -60,6 +108,18 @@ jobs:
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
+      - name: Set KUBECONFIG env and run ansible 2
+        run: |
+          CONFIG_NAMES=$(cat inventory | grep clusters_name)
+          CONFIG_NAMES=${CONFIG_NAMES##*=}
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/,/.yml:\/home\/runner\/work\/kubernetes_multicluster\/kubernetes_multicluster\/terraform\//g')
+          PWD=$(pwd)
+          CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
+          export KUBECONFIG="${CONFIG_NAMES}.yml"
+          echo "$KUBECONFIG"
+          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG"
+        working-directory: ${{ github.workspace}}/terraform
   
       - name: Terraform Destroy 2
         run: terraform destroy --auto-approve
@@ -69,7 +129,19 @@ jobs:
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
 
-  
+      - name: Set KUBECONFIG env and run ansible 3
+        run: |
+          CONFIG_NAMES=$(cat inventory | grep clusters_name)
+          CONFIG_NAMES=${CONFIG_NAMES##*=}
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/"//g')
+          CONFIG_NAMES=$(echo "$CONFIG_NAMES" | sed -r 's/,/.yml:\/home\/runner\/work\/kubernetes_multicluster\/kubernetes_multicluster\/terraform\//g')
+          PWD=$(pwd)
+          CONFIG_NAMES=$(echo "$PWD/$CONFIG_NAMES")
+          export KUBECONFIG="${CONFIG_NAMES}.yml"
+          echo "$KUBECONFIG"
+          ansible-playbook ./ansible/install_multicluster_playbook.yml -i inventory -e "kubeconfig=$KUBECONFIG"
+        working-directory: ${{ github.workspace}}/terraform
+
       - name: Terraform Destroy 3
         run: terraform destroy --auto-approve
         working-directory: ${{ github.workspace}}/terraform
