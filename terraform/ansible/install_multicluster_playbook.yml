@@ -28,9 +28,13 @@
   
     - name: Generate Linkerd certificates
       command: "step certificate create root.linkerd.cluster.local root.crt root.key --profile root-ca --no-password --insecure"
+      retries: 2
+      delay: 10
 
     - name: Generate Linkerd issuer credentials certificates
       command: "step certificate create identity.linkerd.cluster.local issuer.crt issuer.key --profile intermediate-ca --not-after 8760h --no-password --insecure --ca root.crt --ca-key root.key"
+      retries: 2
+      delay: 10
 
     - name: Install Linkerd in each cluster
       shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
