@@ -34,6 +34,8 @@
 
     - name: Install Linkerd in each cluster
       shell: "/home/runner/.linkerd2/bin/linkerd install --identity-trust-anchors-file root.crt --identity-issuer-certificate-file issuer.crt --identity-issuer-key-file issuer.key --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      retries: 2
+      delay: 60
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 120 seconds and continue with play
@@ -51,6 +53,8 @@
 
     - name: Install Linkerd viz cluster
       shell: "/home/runner/.linkerd2/bin/linkerd viz install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      retries: 2
+      delay: 60
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 120 seconds and continue with play
@@ -68,6 +72,8 @@
 
     - name: Install Linkerd multicluster
       shell: "/home/runner/.linkerd2/bin/linkerd multicluster install --context='{{ item }}' | kubectl --context='{{ item }}' apply -f -"
+      retries: 2
+      delay: 60
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Sleep for 60 seconds and continue with play
@@ -89,6 +95,8 @@
         /home/runner/.linkerd2/bin/linkerd multicluster link --cluster-name {{ item }} --context='{{ item }}' --set 'enableHeadlessServices=true' | kubectl --context='{{ master_cluster }}' apply -f -
       loop: "{{ clusters_name.split(',') }}"
       when: item != master_cluster
+      retries: 2
+      delay: 60
 
     - name: Sleep for 60 seconds and continue with play
       ansible.builtin.wait_for:
@@ -98,6 +106,8 @@
       shell: "kubectl --context='{{ item }}' apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
       register: "check_nginx"
       with_items: "{{ clusters_name.split(',') }}"
+      retries: 2
+      delay: 30
 
     - name: Show Check nginx
       debug: "msg={{ item.stdout_lines }}"
@@ -110,3 +120,5 @@
     - name: Expose dashboards
       shell: "kubectl --context='{{ item }}' apply -f /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/deployments/expose_dashboard.yml"
       with_items: "{{ clusters_name.split(',') }}"
+      retries: 2
+      delay: 30
