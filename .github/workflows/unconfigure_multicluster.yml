@@ -73,11 +73,7 @@ jobs:
       - name: Terraform Init
         run: terraform init
         working-directory: ${{ github.workspace}}/terraform
-        
-      - name: Terraform Plan
-        run: terraform plan #-target module.clusters_azure -target module.clusters_aws
-        working-directory: ${{ github.workspace}}/terraform
-               
+                     
       - name: Terraform Apply Full
         run: time terraform apply --auto-approve
         working-directory: ${{ github.workspace}}/terraform
