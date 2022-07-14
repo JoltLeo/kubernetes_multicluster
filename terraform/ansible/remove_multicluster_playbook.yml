@@ -26,21 +26,7 @@
   
   tasks:
 
-    - name: Remove expose dashboards
-      shell: "kubectl --context='{{ item }}' delete -f /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/deployments/expose_dashboard.yml"
-      with_items: "{{ clusters_name.split(',') }}"
-      register: result_7
-      retries: 2
-      delay: 60
-      until: result_7 is not failed
 
-    - name: Remove nginx on clusters
-      shell: "kubectl --context='{{ item }}' delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
-      register: "check_nginx"
-      with_items: "{{ clusters_name.split(',') }}"
-      retries: 2
-      delay: 60
-      until: check_nginx is not failed
 
     - name: Unlink Linkerd clusters
       shell: |
