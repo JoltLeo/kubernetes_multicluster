@@ -48,10 +48,6 @@
       until: result_3 is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 120 seconds and continue with play
-      ansible.builtin.wait_for:
-        timeout: 120
-
     - name: Check clusters
       shell: "/home/runner/.linkerd2/bin/linkerd check --context='{{ item }}'"
       register: "check_clusters1"
@@ -72,13 +68,12 @@
       until: result_4 is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 120 seconds and continue with play
-      ansible.builtin.wait_for:
-        timeout: 120
-
     - name: Check clusters viz
       shell: "/home/runner/.linkerd2/bin/linkerd check --context='{{ item }}'"
       register: "check_clusters"
+      retries: 2
+      delay: 90
+      until: check_clusters is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check clusters viz
@@ -93,13 +88,12 @@
       until: result_5 is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
-    - name: Sleep for 60 seconds and continue with play
-      ansible.builtin.wait_for:
-        timeout: 60
-
     - name: Check gateway on clusters
       shell: "kubectl --context='{{ item }}' -n linkerd-multicluster rollout status deploy/linkerd-gateway"
       register: "check_gateway"
+      retries: 2
+      delay: 60
+      until: check_gateway is not failed
       with_items: "{{ clusters_name.split(',') }}"
 
     - name: Show Check gateways

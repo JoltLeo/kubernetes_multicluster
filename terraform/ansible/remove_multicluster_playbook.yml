@@ -1,0 +1,80 @@
+---
+- hosts: all
+  become: yes
+  environment:
+    KUBECONFIG: "{{ kubeconfig_env }}"
+  
+  pre_tasks:
+  
+    - name: Create kubeconfig files
+      ansible.builtin.copy:
+        dest: "{{ index }}.yml"
+        content: |
+          {{ item | b64decode }}
+      loop: "{{ kubeconfigs_b64.split(',') }}"
+      loop_control:
+        index_var: index
+      no_log: true  
+      
+    - name: Get all kubernetes cluster contexts
+      command: |
+        kubectl config get-contexts
+      register: contexts
+      
+    - name: Show all kubernetes cluster contexts
+      debug: var=contexts.stdout
+  
+  tasks:
+
+    - name: Remove expose dashboards
+      shell: "kubectl --context='{{ item }}' delete -f /home/runner/work/kubernetes_multicluster/kubernetes_multicluster/terraform/ansible/deployments/expose_dashboard.yml"
+      with_items: "{{ clusters_name.split(',') }}"
+      register: result_7
+      retries: 2
+      delay: 60
+      until: result_7 is not failed
+
+    - name: Remove nginx on clusters
+      shell: "kubectl --context='{{ item }}' delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.2.1/deploy/static/provider/cloud/deploy.yaml"
+      register: "check_nginx"
+      with_items: "{{ clusters_name.split(',') }}"
+      retries: 2
+      delay: 60
+      until: check_nginx is not failed
+
+    - name: Unlink Linkerd clusters
+      shell: |
+        /home/runner/.linkerd2/bin/linkerd multicluster unlink --cluster-name {{ item }} --context='{{ master_cluster }}' | kubectl --context='{{ master_cluster }}' delete -f -
+        /home/runner/.linkerd2/bin/linkerd multicluster unlink --cluster-name {{ master_cluster }} --context='{{ item }}' | kubectl --context='{{ item }}' delete -f -
+      loop: "{{ clusters_name.split(',') }}"
+      when: item != master_cluster
+      register: result_6
+      retries: 2
+      delay: 60
+      until: result_6 is not failed
+
+    - name: Remove Linkerd multicluster
+      shell: "/home/runner/.linkerd2/bin/linkerd multicluster uninstall --context='{{ item }}' | kubectl --context='{{ item }}' delete -f -"
+      register: result_5
+      retries: 2
+      delay: 60
+      until: result_5 is not failed
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Remove Linkerd viz cluster
+      shell: "/home/runner/.linkerd2/bin/linkerd viz uninstall --context='{{ item }}' | kubectl --context='{{ item }}' delete -f -"
+      register: result_4
+      retries: 2
+      delay: 60
+      until: result_4 is not failed
+      with_items: "{{ clusters_name.split(',') }}"
+
+    - name: Remove Linkerd in each cluster
+      shell: "/home/runner/.linkerd2/bin/linkerd uninstall --context='{{ item }}' | kubectl --context='{{ item }}' delete -f -"
+      register: result_3
+      retries: 2
+      delay: 60
+      until: result_3 is not failed
+      with_items: "{{ clusters_name.split(',') }}"
+
+

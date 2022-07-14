@@ -1,9 +1,9 @@
 azure_clusters:
   eastus:
   westus:
-  centralus:
-  westcentralus:
-  southcentralus:
+  #centralus:
+  #westcentralus:
+  #southcentralus:
 
 aws_clusters:
   #1:
