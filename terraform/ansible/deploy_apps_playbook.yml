@@ -45,7 +45,7 @@
         file_type: file
         recurse: yes
         patterns: '*.yml'
-        exlude: 'namespace.yml'
+        exclude: 'namespace.yml'
       register: app_files
 
     - name: Deploy apps
