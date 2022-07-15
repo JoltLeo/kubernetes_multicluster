@@ -13,7 +13,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/opt/filecontainer"
+    path: "/opt/filespf"
 
 ---
 kind: PersistentVolumeClaim
