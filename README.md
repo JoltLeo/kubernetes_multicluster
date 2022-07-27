@@ -29,6 +29,7 @@ For **AWS** deployment:
 ## Running the Tool
 ---------------
 The tool is able to execute localy or in a GitHub-hosted agent using the workflow [create_multicluster.yml](./.github/workflows/create_multicluster.yml).
+To change the number of clusters, region and other parameters, please refer to each module documentation and edit [clusters.yml](./terraform/clusters.yml) file.
 
 ### Local Execution
 ----
